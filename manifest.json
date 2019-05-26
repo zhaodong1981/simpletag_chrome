@@ -3,7 +3,7 @@
   "version": "0.1",
   "description": "Chrome extenstion to manage your tags, including search, add, edit and delete.",
   "permissions": [
-    "http://localhost:3000/"
+    "http://zhaodong.usersys.redhat.com:3000/"
     
   ],
   "browser_action": {
