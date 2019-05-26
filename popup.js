@@ -2,7 +2,7 @@
 
 let getdata = document.getElementById('getdata');
 
-onclick = function(element) {
+getdata.onclick = function() {
   console.log("btn get data")
   $.ajax({
         url: "http://localhost:3000/api/car/5"
