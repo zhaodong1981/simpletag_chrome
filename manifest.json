@@ -1,13 +1,14 @@
 {
-  "name": "Simple tags",
+  "name": "My Bookmarks",
   "version": "0.1",
   "description": "Chrome extenstion to manage your tags, including search, add, edit and delete.",
   "permissions": [
-    "http://zhaodong.usersys.redhat.com:3000/"
+    "https://v.zhaodong.name/",
+    "tabs"
     
   ],
   "browser_action": {
-      "default_title": "My tags",
+      "default_title": "My Bookmarks",
       "default_icon": "icon.png",
       "default_popup": "popup.html"
   },
