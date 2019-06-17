@@ -1,6 +1,7 @@
 'use strict';
 var mainApp = angular.module("mainApp", []);
  
+
 //display existing tags
 mainApp.controller('bookmarkController', function($scope, $http) {
    $scope.bookmarks = [];
@@ -15,6 +16,23 @@ mainApp.controller('bookmarkController', function($scope, $http) {
      $scope.page={"title": title, "url": url};
      console.log(page);
    });
+   
+   let refreshBtn = document.getElementById('refresh');
+   refreshBtn.onclick = function() {
+      $http.get('https://v.zhaodong.name/api/link').then(function (result) {
+         $scope.bookmarks =result.data;
+   });
+   };
+   let cancelBtn = document.getElementById('cancel');
+   cancelBtn.onclick = function() {
+      window.close();
+   };
+
+   let searchBtn = document.getElementById('search');
+   searchBtn.onclick = function() {
+      var keywords = document.getElementById('keywords').value;
+      alert("Search " +keywords);
+   };
 });
 function formatTags(oldtags){
    let tempTags = [];
@@ -69,3 +87,4 @@ function formatTags(oldtags){
        });
    });
 }
+
