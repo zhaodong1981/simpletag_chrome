@@ -11,18 +11,30 @@
         overflow-x: auto;
         white-space: nowrap;
     }
-</style>
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body style="width: 600px">
-  <div>Create a new bookmark: </div>
-  <div>Title: <input id="title"/></div>
-  <div>URL: <input id="url"/></div>
-  <div>Tags: <input id="tags"/></div>
-  <button id="create">Create</button>
-  <div id="response">Response: </div>
-  <div ng-app = "mainApp" ng-controller = "bookmarkController">
-    <table class="table">
-      <thead>
+  <h2>Create a new bookmark </h2>
+  <div ng-app = "mainApp" ng-controller = "bookmarkController" >
+    <div class="form-group">
+        <label class="font-weight-bold">Title</label>
+        <input type="text" id="title" class="form-control" value="{{ page.title }}"/>
+        <label class="font-weight-bold">URL</label>
+        <input type="text" id="url" class="form-control" value="{{ page.url }}" readonly/>
+        <label class="font-weight-bold">Tags</label>
+        <input type="text" id="tags" class="form-control" placeholder="Input your tags here, separated by ,"/>
+       
+    </div>
+    <button id="create" type="button" class="btn btn-primary">Create</button>
+    <button id="cancel" type="button" class="btn btn-secondary" style="float:right;">Cancel</button>
+    <p> </p>
+    <button type="button" class="btn btn-light" style="float:right;">
+      <i class="fa fa-refresh"></i>
+      Refresh
+    </button>
+    <table class="table table-striped table-borderless table-sm">
+      <thead class="thead-light">
         <tr>
           <th scope="col">Bookmark</th>
           <th scope="col">Tags</th>
@@ -33,7 +45,7 @@
           <td><a href="{{ bookmark.url }}" target="_blank" >{{ bookmark.title }}</a></td>
           <td>
                   <span ng-repeat="tag in bookmark.tags"> 
-                      <a href="https://v.zhaodong.name/api/tags/{{ tag }}" target="_blank" >{{ tag }}</a> | 
+                      <a href="https://v.zhaodong.name/api/tags/{{ tag }}" target="_blank" >{{ tag }}</a> 
                   </span>
           </td>
        </tr>
