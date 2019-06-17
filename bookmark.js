@@ -5,8 +5,9 @@ var mainApp = angular.module("mainApp", []);
 //display existing tags
 mainApp.controller('bookmarkController', function($scope, $http) {
    $scope.bookmarks = [];
-   $http.get('https://v.zhaodong.name/api/link').then(function (result) {
-      $scope.bookmarks =result.data;
+   //only get the recently modified 50 bookmakrs
+   $http.get('https://v.zhaodong.name/api/link?per_page=50&page=1').then(function (result) {
+      $scope.bookmarks =result.data.data;
    });
    var url = "";
    var title = "";
@@ -19,9 +20,9 @@ mainApp.controller('bookmarkController', function($scope, $http) {
    
    let refreshBtn = document.getElementById('refresh');
    refreshBtn.onclick = function() {
-      $http.get('https://v.zhaodong.name/api/link').then(function (result) {
-         $scope.bookmarks =result.data;
-   });
+      $http.get('https://v.zhaodong.name/api/link?per_page=50&page=1').then(function (result) {
+         $scope.bookmarks =result.data.data;
+      });
    };
    let cancelBtn = document.getElementById('cancel');
    cancelBtn.onclick = function() {
@@ -32,6 +33,9 @@ mainApp.controller('bookmarkController', function($scope, $http) {
    searchBtn.onclick = function() {
       var keywords = document.getElementById('keywords').value;
       alert("Search " +keywords);
+      $http.get('https://v.zhaodong.name/api/link/search?q=' + keywords).then(function (result) {
+        $scope.bookmarks =result.data;
+     });
    };
 });
 function formatTags(oldtags){
