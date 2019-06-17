@@ -20,13 +20,7 @@ let createBtn = document.getElementById('create');
 
 createBtn.onclick = function() {
   console.log("create a bookmark")
- /* $.ajax({
-        url: "https://v.zhaodong.name/api/link/"
-  }).then(function(data) {
-    console.log(data);
-    $('#editdialog').html(data[0].id+', '+ data[0].title);
-  });
-*/
+
 //alert("creating a bookmark");
 let tagsInput = document.getElementById('tags');
 let tags = formatTags (tagsInput.value);
@@ -52,11 +46,9 @@ fetch('https://v.zhaodong.name/api/link/create', {
   })
 }
 ).then(function(data) {
-  console.log(data);
-  $('#response').html(data);
+  console.log("bookmark created");
 }).catch(error => {
   console.error('Error during create bookmark:', error);
-  alert(error);
 });
 });
 

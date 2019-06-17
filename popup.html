@@ -13,7 +13,7 @@
     }
 </style>
 </head>
-<body style="width: 400px">
+<body style="width: 600px">
   <div>Create a new bookmark: </div>
   <div>Title: <input id="title"/></div>
   <div>URL: <input id="url"/></div>
@@ -24,16 +24,18 @@
     <table class="table">
       <thead>
         <tr>
-          <th scope="col">Title</th>
-          <th scope="col">URL</th>
+          <th scope="col">Bookmark</th>
           <th scope="col">Tags</th>
         </tr>
       </thead>
       <tbody>
         <tr ng-repeat = "bookmark in bookmarks">
-          <td>{{ bookmark.title }}</td>
-          <td><a href={{ bookmark.url }} target="_blank" >{{ bookmark.url }}</a></td>
-          <td>{{ bookmark.tags }}</td>
+          <td><a href="{{ bookmark.url }}" target="_blank" >{{ bookmark.title }}</a></td>
+          <td>
+                  <span ng-repeat="tag in bookmark.tags"> 
+                      <a href="https://v.zhaodong.name/api/tags/{{ tag }}" target="_blank" >{{ tag }}</a> | 
+                  </span>
+          </td>
        </tr>
       </tbody>
     </table>
