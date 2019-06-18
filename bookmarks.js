@@ -87,5 +87,6 @@ function formatTags(oldtags){
        console.error('Error during create bookmark:', error);
        });
    });
+   window.close();
 }
 
