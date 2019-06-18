@@ -32,9 +32,12 @@ mainApp.controller('bookmarkController', function($scope, $http) {
    let searchBtn = document.getElementById('search');
    searchBtn.onclick = function() {
       var keywords = document.getElementById('keywords').value;
-      $http.get('https://v.zhaodong.name/api/link/search?q=' + keywords).then(function (result) {
-        $scope.bookmarks =result.data;
-     });
+      if(typeof keywords != 'undefined' && keywords != '' && keywords != null ){
+        
+          $http.get('https://v.zhaodong.name/api/link/search?q=' + keywords).then(function (result) {
+          $scope.bookmarks =result.data;
+       });
+      }
    };
 });
 function formatTags(oldtags){
