@@ -32,7 +32,6 @@ mainApp.controller('bookmarkController', function($scope, $http) {
    let searchBtn = document.getElementById('search');
    searchBtn.onclick = function() {
       var keywords = document.getElementById('keywords').value;
-      alert("Search " +keywords);
       $http.get('https://v.zhaodong.name/api/link/search?q=' + keywords).then(function (result) {
         $scope.bookmarks =result.data;
      });
@@ -58,18 +57,13 @@ function formatTags(oldtags){
  let createBtn = document.getElementById('create');
  
  createBtn.onclick = function() {
-   console.log("create a bookmark")
- 
-   //alert("creating a bookmark");
    let tagsInput = document.getElementById('tags');
    let tags = formatTags (tagsInput.value);
-   alert( "tags=" + tags);
    var url = "";
    var title = "";
    chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
      url = tabs[0].url;
      title = tabs[0].title
-     alert("url="+url + ", title = "+title + ",tags="+ tags);
  
      fetch('https://v.zhaodong.name/api/link/create', {
          method: 'POST',
