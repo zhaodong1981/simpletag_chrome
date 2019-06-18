@@ -15,7 +15,7 @@ mainApp.controller('bookmarkController', function($scope, $http) {
      url = tabs[0].url;
      title = tabs[0].title
      $scope.page={"title": title, "url": url};
-     console.log(page);
+  
    });
    
    let refreshBtn = document.getElementById('refresh');
