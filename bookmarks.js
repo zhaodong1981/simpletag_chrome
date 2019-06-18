@@ -33,7 +33,7 @@ mainApp.controller('bookmarkController', function($scope, $http) {
    searchBtn.onclick = function() {
       var keywords = document.getElementById('keywords').value;
       if(typeof keywords != 'undefined' && keywords != '' && keywords != null ){
-        
+          keywords = encodeURIComponent(keywords);
           $http.get('https://v.zhaodong.name/api/link/search?q=' + keywords).then(function (result) {
           $scope.bookmarks =result.data;
        });
