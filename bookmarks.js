@@ -7,12 +7,12 @@ mainApp.controller('bookmarkController', function($scope, $http) {
    $scope.bookmarks = [];
   let token ='';
   chrome.storage.local.get(['token'], function(result) {
-  //  alert('Settings retrieved' + result.token);
     if (result.token){
       token = result.token;
       showBookmarks(token);
  
     } else {
+     // alert("Need to login");
       login("test","test").then((result) => {
         token = result.token;
         showBookmarks(token)
@@ -69,18 +69,23 @@ mainApp.controller('bookmarkController', function($scope, $http) {
 
     });
   };
-   let refreshBtn = document.getElementById('refresh');
-   refreshBtn.onclick = function() {
-    if (token === ''){
+   let logoutBtn = document.getElementById('logout');
+   logoutBtn.onclick = function() {
+   /* if (token === ''){
       alert('Not login');
       return;
     }
       $http.get('https://v.zhaodong.name/api/link?per_page=50&page=1',{headers: {'Authorization': 'Bearer ' + token }}).then(function (result) {
          $scope.bookmarks =result.data.data;
       });
+    */
+   
+    chrome.storage.local.remove("token", function() {
+      alert('Logging out. Reopen to login again.');
+    });
    };
-   let cancelBtn = document.getElementById('cancel');
-   cancelBtn.onclick = function() {
+   let closeBtn = document.getElementById('close');
+   closeBtn.onclick = function() {
       window.close();
    };
 
