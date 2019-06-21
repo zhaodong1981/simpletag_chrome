@@ -4,8 +4,8 @@
   "description": "Chrome extenstion to manage your tags, including search, add, edit and delete.",
   "permissions": [
     "https://v.zhaodong.name/",
-    "tabs"
-    
+    "tabs",
+    "storage"
   ],
   "browser_action": {
       "default_title": "My Bookmarks",
