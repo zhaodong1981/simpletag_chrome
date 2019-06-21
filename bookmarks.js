@@ -6,14 +6,14 @@ var mainApp = angular.module("mainApp", []);
 mainApp.controller('bookmarkController', function($scope, $http) {
    $scope.bookmarks = [];
   let token ='';
-  chrome.storage.local.get(['token'], function(result) {
+  chrome.storage.local.get(['token','username','password'], function(result) {
     if (result.token){
       token = result.token;
       showBookmarks(token);
  
-    } else {
+    } else if(result.username && result.password){
      // alert("Need to login");
-      login("test","test").then((result) => {
+      login(result.username,result.password).then((result) => {
         token = result.token;
         showBookmarks(token)
      }
