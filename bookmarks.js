@@ -82,6 +82,7 @@ mainApp.controller('bookmarkController', function($scope, $http) {
    
     chrome.storage.local.remove("token", function() {
       alert('Logging out. Reopen to login again.');
+      window.close();
     });
    };
    let closeBtn = document.getElementById('close');
