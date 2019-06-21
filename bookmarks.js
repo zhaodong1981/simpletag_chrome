@@ -131,27 +131,28 @@ mainApp.controller('bookmarkController', function($scope, $http) {
       url = tabs[0].url;
       title = tabs[0].title
   
-      fetch('https://v.zhaodong.name/api/link/create', {
+      $http.post('https://v.zhaodong.name/api/link/create',
+      JSON.stringify({
+        'title': title,
+        'url': url,
+        'description': "test description",
+        'tags': tags          
+      }),
+      {
           method: 'POST',
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + token 
-          },
-          body: JSON.stringify({
-            'title': title,
-            'url': url,
-            'description': "test description",
-            'tags': tags          
-          })
+          }
         }
-      ).then(function(data) {
+      ).then(function() {
         console.log("bookmark created");
         alert("bookmark created");
         window.close();
       }).catch(error => {
         console.error('Error during create bookmark:', error);
-     //   alert("bookmark created failed " + error);
+        alert("bookmark created failed " + error);
         });
         window.close();
     });
