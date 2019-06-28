@@ -4,8 +4,10 @@ var mainApp = angular.module("mainApp", []);
 
 //display existing tags
 mainApp.controller('bookmarkController', function($scope, $http) {
-   $scope.bookmarks = [];
+  $scope.bookmarks = [];
   let token ='';
+  $scope.tags ='';
+  var existingBookmark;
   chrome.storage.local.get(['token','username','password'], function(result) {
     if (result.token){
       token = result.token;
@@ -19,10 +21,20 @@ mainApp.controller('bookmarkController', function($scope, $http) {
      }
     
      ).catch(error => {
-       alert('login failed' +  error);});
+       alert('login failed' +  JSON.stringify(error));});
     }
   });
- 
+
+  //get URL and title of current tab
+  var url = "";
+  var title = "";
+  chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
+    url = tabs[0].url;
+    title = tabs[0].title
+    $scope.page={"title": title, "url": url};
+
+  });
+
   function handleResponse(response) {
     return response.text().then(text => {
         const data = text && JSON.parse(text);
@@ -59,14 +71,17 @@ mainApp.controller('bookmarkController', function($scope, $http) {
   function showBookmarks (token) {
       $http.get('https://v.zhaodong.name/api/link?per_page=50&page=1',{headers: {'Authorization': 'Bearer ' + token }}).then(function (result) {
         $scope.bookmarks =result.data.data;
-    });
-    var url = "";
-    var title = "";
-    chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
-      url = tabs[0].url;
-      title = tabs[0].title
-      $scope.page={"title": title, "url": url};
-
+        for(const bookmark of result.data.data){
+          if($scope.page.url === bookmark.url){
+            //$scope.tags = bookmark.tags;
+            existingBookmark = bookmark;
+            document.getElementById('create').innerHTML = 'Save';
+            for(const tag of bookmark.tags){
+              $scope.tags +=tag + ',';
+            }
+            break;
+          }
+        }
     });
   };
 
@@ -142,40 +157,57 @@ mainApp.controller('bookmarkController', function($scope, $http) {
       alert('Not login');
       return;
     }
+    
    // alert('Not login');
     let tagsInput = document.getElementById('tags');
     let tags = formatTags (tagsInput.value);
-    var url = "";
-    var title = "";
-    chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
-      url = tabs[0].url;
-      title = tabs[0].title
+    var url = $scope.page.url;
+    var title = $scope.page.title;
+    var body =    JSON.stringify({
+      'title': title,
+      'url': url,
+      'description': existingBookmark ? existingBookmark.description : 'Bookmark created via chrome extension',
+      'tags': tags          
+    });
+
+    var headers = {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token 
+    };
+
+   if (existingBookmark){
   
-      $http.post('https://v.zhaodong.name/api/link/create',
-      JSON.stringify({
-        'title': title,
-        'url': url,
-        'description': "test description",
-        'tags': tags          
-      }),
+     $http.put('https://v.zhaodong.name/api/link/'+existingBookmark.id,
+     body,
+      {   
+          method: 'PUT',
+          headers: headers
+        }
+      ).then(function() {
+        console.log("bookmark updated");
+        window.close();
+      }).catch(error => {
+        console.error('Error during updating bookmark:', error);
+        alert("bookmark created failed " + JSON.stringify(error));
+     });
+   } else {
+ //    alert("new bookmark");
+     $http.post('https://v.zhaodong.name/api/link/create',
+      body,
       {
           method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token 
-          }
+          headers: headers
         }
       ).then(function() {
         console.log("bookmark created");
-        alert("bookmark created");
         window.close();
       }).catch(error => {
         console.error('Error during create bookmark:', error);
-        alert("bookmark created failed " + error);
-        });
-        window.close();
-    });
+        alert("bookmark created failed " + JSON.stringify(error));
+     });
+     //window.close();
+   }
     
  }
 });
