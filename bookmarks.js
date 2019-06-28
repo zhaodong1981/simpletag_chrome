@@ -69,6 +69,24 @@ mainApp.controller('bookmarkController', function($scope, $http) {
 
     });
   };
+
+  function search () {
+    if (token === ''){
+      alert('Not login');
+      return;
+    }
+      var keywords = document.getElementById('keywords').value;
+      if(typeof keywords != 'undefined' && keywords != '' && keywords != null ){
+          keywords = encodeURIComponent(keywords);
+          $http.get('https://v.zhaodong.name/api/link/search?q=' + keywords,{headers: {'Authorization': 'Bearer ' + token }}).then(function (result) {
+          $scope.bookmarks =result.data;
+       });
+      }else { // show bookmarks
+        $http.get('https://v.zhaodong.name/api/link?per_page=50&page=1',{headers: {'Authorization': 'Bearer ' + token }}).then(function (result) {
+          $scope.bookmarks =result.data.data;
+       });
+      }
+  }
    let logoutBtn = document.getElementById('logout');
    logoutBtn.onclick = function() {
    /* if (token === ''){
@@ -92,18 +110,14 @@ mainApp.controller('bookmarkController', function($scope, $http) {
 
    let searchBtn = document.getElementById('search');
    searchBtn.onclick = function() {
-    if (token === ''){
-      alert('Not login');
-      return;
-    }
-      var keywords = document.getElementById('keywords').value;
-      if(typeof keywords != 'undefined' && keywords != '' && keywords != null ){
-          keywords = encodeURIComponent(keywords);
-          $http.get('https://v.zhaodong.name/api/link/search?q=' + keywords,{headers: {'Authorization': 'Bearer ' + token }}).then(function (result) {
-          $scope.bookmarks =result.data;
-       });
-      }
+    search();
    };
+   let keywordInput = document.getElementById('keywords');
+   keywordInput.addEventListener("keyup", function(event) {
+      if (event.key === "Enter") {
+        search();
+      }
+   });
    function formatTags(oldtags){
     let tempTags = [];
     if(typeof oldtags !== 'undefined' && oldtags && oldtags.constructor === Array){
