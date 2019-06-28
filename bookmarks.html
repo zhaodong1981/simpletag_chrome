@@ -19,17 +19,24 @@
     <i class="fa fa-refresh"></i>
     Logout
   </button>
-  <h2>Create a new bookmark </h2>
+  <h2>My Bookmarks</h2>
   <div ng-app = "mainApp" ng-controller = "bookmarkController" >
-    <div class="form-group">
-        <label class="font-weight-bold">Title</label>
-        <input type="text" id="title" class="form-control" value="{{ page.title }}"/>
-        <label class="font-weight-bold">URL</label>
-        <input type="text" id="url" class="form-control" value="{{ page.url }}" readonly/>
-        <label class="font-weight-bold">Tags</label>
-        <input type="text" id="tags" class="form-control" placeholder="Input your tags here, separated by ," value="{{ tags }}"/>
-       
+
+    <div class="form-row">
+        <label class="font-weight-bold col-sm-1">Title</label>
+        <input type="text" id="title" class="form-control col-sm-11" value="{{ page.title }}"/>
     </div>
+    <p></p>
+    <div class="form-row">
+        <label class="font-weight-bold col-sm-1">URL</label>
+        <input type="text" id="url" class="form-control col-sm-11" value="{{ page.url }}" readonly/>
+    </div>
+    <p></p>
+    <div class="form-row">
+        <label class="font-weight-bold col-sm-1">Tags</label>
+        <input type="text" id="tags" class="form-control col-sm-11" placeholder="Input your tags here, separated by ," value="{{ tags }}"/>
+    </div>
+  
     <button id="create" type="button" class="btn btn-primary">Create</button>
     <button id="close" type="button" class="btn btn-secondary" style="float:right;">Close</button>
     <p> </p>
