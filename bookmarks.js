@@ -26,12 +26,8 @@ mainApp.controller('bookmarkController', function($scope, $http) {
   });
 
   //get URL and title of current tab
-  var url = "";
-  var title = "";
   chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
-    url = tabs[0].url;
-    title = tabs[0].title
-    $scope.page={"title": title, "url": url};
+    $scope.page={"title": tabs[0].title, "url": tabs[0].url};
 
   });
 
@@ -159,10 +155,9 @@ mainApp.controller('bookmarkController', function($scope, $http) {
     }
     
    // alert('Not login');
-    let tagsInput = document.getElementById('tags');
-    let tags = formatTags (tagsInput.value);
-    var url = $scope.page.url;
-    var title = $scope.page.title;
+    let tags = formatTags (document.getElementById('tags').value);
+    var url = document.getElementById('url').value;
+    var title = document.getElementById('title').value;
     var body =    JSON.stringify({
       'title': title,
       'url': url,
