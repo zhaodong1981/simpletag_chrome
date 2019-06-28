@@ -63,10 +63,11 @@ mainApp.controller('bookmarkController', function($scope, $http) {
             return user;
         });
 };
+function rWord(r){var t,n="bcdfghjklmnpqrstvwxyz",a="aeiou",e=function(r){return Math.floor(Math.random()*r)},o="";r=parseInt(r,10),n=n.split(""),a=a.split("");for(t=0;t<r/2;t++){var l=n[e(n.length)],p=a[e(a.length)];o+=0===t?l.toUpperCase():l,o+=2*t<r-1?p:""}return o}
 
   function showBookmarks (token) {
       $http.get('https://v.zhaodong.name/api/link?per_page=50&page=1',{headers: {'Authorization': 'Bearer ' + token }}).then(function (result) {
-        $scope.bookmarks =result.data.data;
+    //    $scope.bookmarks =result.data.data;
         for(const bookmark of result.data.data){
           if($scope.page.url === bookmark.url){
             //$scope.tags = bookmark.tags;
@@ -78,6 +79,30 @@ mainApp.controller('bookmarkController', function($scope, $http) {
             break;
           }
         }
+
+        	// Generate a big table
+		for(const bookmark of result.data.data ){
+
+      var row1 = "<tr><td>" +  "<a href=\""+bookmark.url + "\" target=\"_blank\" >"+bookmark.title+"</a>" +"</td> <td>";
+    
+      for (const tag of bookmark.tags){
+        row1 += "<a href=\"https://v.zhaodong.name/tag/tag.html#?name="+tag + "\" target=\"_blank\" style=\"margin: 5px\">"+tag+"</a>"
+      }
+
+      row1+="</td></tr>";
+      $("#sampleTableA").append(row1);
+          
+		}
+				// And a simple one
+				
+
+				// And make them fancy
+				$("#sampleTableA").fancyTable({
+					sortColumn:0,
+					pagination: true,
+					perPage:10,
+					globalSearch:true
+				});
     });
   };
 
@@ -206,4 +231,3 @@ mainApp.controller('bookmarkController', function($scope, $http) {
     
  }
 });
-

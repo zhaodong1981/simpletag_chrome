@@ -45,28 +45,21 @@
         <i class="fa fa-search"></i>
         Search
       </button>
-   
-    <div class="table-responsive">
-    <table class="table table-striped table-borderless table-sm">
-      <thead class="thead-light">
-        <tr>
-          <th scope="col">Bookmark</th>
-          <th scope="col">Tags</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr ng-repeat = "bookmark in bookmarks">
-          <td><a href="{{ bookmark.url }}" target="_blank" >{{ bookmark.title }}</a></td>
-          <td>
-                  <span ng-repeat="tag in bookmark.tags"> 
-                      <a href="https://v.zhaodong.name/tag/tag.html#?name={{tag}}" target="_blank" >{{ tag }}</a> 
-                  </span>
-          </td>
-       </tr>
-      </tbody>
-    </table>
-  </div>
+   <div class="table-responsive">
+  <table id="sampleTableA" class="table table-striped table-borderless table-sm">
+    <thead class="thead-light">
+      <tr>
+        <th scope="col">Bookmark</th>
+        <th scope="col">Tags</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+</div>
  </div>
+ 
+<script src="test/fancyTable.js"></script>
   <script src="bookmarks.js"></script>
 </body>
 </html>
