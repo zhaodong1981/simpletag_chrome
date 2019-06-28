@@ -63,9 +63,8 @@ mainApp.controller('bookmarkController', function($scope, $http) {
             return user;
         });
 };
-function rWord(r){var t,n="bcdfghjklmnpqrstvwxyz",a="aeiou",e=function(r){return Math.floor(Math.random()*r)},o="";r=parseInt(r,10),n=n.split(""),a=a.split("");for(t=0;t<r/2;t++){var l=n[e(n.length)],p=a[e(a.length)];o+=0===t?l.toUpperCase():l,o+=2*t<r-1?p:""}return o}
 
-  function showBookmarks (token) {
+function showBookmarks (token) {
       $http.get('https://v.zhaodong.name/api/link?per_page=50&page=1',{headers: {'Authorization': 'Bearer ' + token }}).then(function (result) {
     //    $scope.bookmarks =result.data.data;
         for(const bookmark of result.data.data){
@@ -100,7 +99,7 @@ function rWord(r){var t,n="bcdfghjklmnpqrstvwxyz",a="aeiou",e=function(r){return
 				$("#sampleTableA").fancyTable({
 					sortColumn:0,
 					pagination: true,
-					perPage:10,
+					perPage:5,
 					globalSearch:true
 				});
     });
@@ -143,7 +142,7 @@ function rWord(r){var t,n="bcdfghjklmnpqrstvwxyz",a="aeiou",e=function(r){return
    closeBtn.onclick = function() {
       window.close();
    };
-
+/*
    let searchBtn = document.getElementById('search');
    searchBtn.onclick = function() {
     search();
@@ -154,6 +153,7 @@ function rWord(r){var t,n="bcdfghjklmnpqrstvwxyz",a="aeiou",e=function(r){return
         search();
       }
    });
+   */
    function formatTags(oldtags){
     let tempTags = [];
     if(typeof oldtags !== 'undefined' && oldtags && oldtags.constructor === Array){
