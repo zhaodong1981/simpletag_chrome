@@ -80,28 +80,28 @@ function showBookmarks (token) {
         }
 
         	// Generate a big table
-		for(const bookmark of result.data.data ){
+      for(const bookmark of result.data.data ){
 
-      var row1 = "<tr><td>" +  "<a href=\""+bookmark.url + "\" target=\"_blank\" >"+bookmark.title+"</a>" +"</td> <td>";
-    
-      for (const tag of bookmark.tags){
-        row1 += "<a href=\"https://v.zhaodong.name/tag/tag.html#?name="+tag + "\" target=\"_blank\" style=\"margin: 5px\">"+tag+"</a>"
+        var row1 = "<tr><td>" +  "<a href=\""+bookmark.url + "\" target=\"_blank\" >"+bookmark.title+"</a>" +"</td> <td>";
+      
+        for (const tag of bookmark.tags){
+          row1 += "<a href=\"https://v.zhaodong.name/tag/tag.html#?name="+tag + "\" target=\"_blank\" style=\"margin: 5px\">"+tag+"</a>"
+        }
+
+        row1+="</td></tr>";
+        $("#bookmarkTable").append(row1);
+            
       }
-
-      row1+="</td></tr>";
-      $("#sampleTableA").append(row1);
+          // And a simple one
           
-		}
-				// And a simple one
-				
 
-				// And make them fancy
-				$("#sampleTableA").fancyTable({
-					sortColumn:0,
-					pagination: true,
-					perPage:5,
-					globalSearch:true
-				});
+          // And make them fancy
+      $("#bookmarkTable").fancyTable({
+        sortColumn:0,
+        pagination: true,
+        perPage:10,
+        globalSearch:true
+      });
     });
   };
 
