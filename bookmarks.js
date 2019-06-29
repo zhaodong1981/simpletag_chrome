@@ -145,10 +145,13 @@ function showBookmarks (token) {
       window.close();
     });
    };
+
+   /*
    let closeBtn = document.getElementById('close');
    closeBtn.onclick = function() {
       window.close();
    };
+   */
 /*
    let searchBtn = document.getElementById('search');
    searchBtn.onclick = function() {
