@@ -97,7 +97,7 @@ function showBookmarks (token) {
 
           // And make them fancy
       $("#bookmarkTable").fancyTable({
-        sortColumn:0,
+ //       sortColumn:0,
         pagination: true,
         perPage:10,
         globalSearch:true
