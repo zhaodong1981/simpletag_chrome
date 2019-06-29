@@ -65,9 +65,10 @@ mainApp.controller('bookmarkController', function($scope, $http) {
 };
 
 function showBookmarks (token) {
-      $http.get('https://v.zhaodong.name/api/link?per_page=50&page=1',{headers: {'Authorization': 'Bearer ' + token }}).then(function (result) {
+      $http.get('https://v.zhaodong.name/api/link',{headers: {'Authorization': 'Bearer ' + token }}).then(function (result) {
     //    $scope.bookmarks =result.data.data;
-        for(const bookmark of result.data.data){
+        const bookmarks = result.data;
+        for(const bookmark of bookmarks){
           if($scope.page.url === bookmark.url){
             //$scope.tags = bookmark.tags;
             existingBookmark = bookmark;
@@ -77,10 +78,9 @@ function showBookmarks (token) {
             }
             break;
           }
-        }
-
+      }
         	// Generate a big table
-      for(const bookmark of result.data.data ){
+      for(const bookmark of bookmarks){
 
         var row1 = "<tr><td>" +  "<a href=\""+bookmark.url + "\" target=\"_blank\" >"+bookmark.title+"</a>" +"</td> <td>";
       
