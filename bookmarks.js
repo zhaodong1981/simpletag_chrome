@@ -75,7 +75,7 @@ function showBookmarks (token) {
             //exists
           existingBookmark = result.data[1];
           document.getElementById('create').innerHTML = 'Save';
-          for(const tag of result.data.tags){
+          for(const tag of existingBookmark.tags){
              $scope.tags +=tag + ',';
           }
         }
