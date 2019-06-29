@@ -8,6 +8,12 @@ mainApp.controller('bookmarkController', function($scope, $http) {
   let token ='';
   $scope.tags ='';
   var existingBookmark;
+  //get URL and title of current tab
+  chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
+    $scope.page={"title": tabs[0].title, "url": tabs[0].url};
+  
+  });
+
   chrome.storage.local.get(['token','username','password'], function(result) {
     if (result.token){
       token = result.token;
@@ -25,11 +31,7 @@ mainApp.controller('bookmarkController', function($scope, $http) {
     }
   });
 
-  //get URL and title of current tab
-  chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
-    $scope.page={"title": tabs[0].title, "url": tabs[0].url};
 
-  });
 
   function handleResponse(response) {
     return response.text().then(text => {
@@ -65,20 +67,25 @@ mainApp.controller('bookmarkController', function($scope, $http) {
 };
 
 function showBookmarks (token) {
+
+//check if the URL exists
+  
+      $http.get('https://v.zhaodong.name/api/link/search?url=' + $scope.page.url,{headers: {'Authorization': 'Bearer ' + token }}).then(function (result) {
+        if(result.data.length >0){
+            //exists
+          existingBookmark = result.data[1];
+          document.getElementById('create').innerHTML = 'Save';
+          for(const tag of result.data.tags){
+             $scope.tags +=tag + ',';
+          }
+        }
+      });
+      
+      
       $http.get('https://v.zhaodong.name/api/link',{headers: {'Authorization': 'Bearer ' + token }}).then(function (result) {
     //    $scope.bookmarks =result.data.data;
         const bookmarks = result.data;
-        for(const bookmark of bookmarks){
-          if($scope.page.url === bookmark.url){
-            //$scope.tags = bookmark.tags;
-            existingBookmark = bookmark;
-            document.getElementById('create').innerHTML = 'Save';
-            for(const tag of bookmark.tags){
-              $scope.tags +=tag + ',';
-            }
-            break;
-          }
-      }
+      
         	// Generate a big table
       for(const bookmark of bookmarks){
 
