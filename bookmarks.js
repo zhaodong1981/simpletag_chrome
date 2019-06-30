@@ -72,7 +72,7 @@ function showBookmarks (token) {
       $http.get('https://v.zhaodong.name/api/link/search?url=' + $scope.page.url,{headers: {'Authorization': 'Bearer ' + token }}).then(function (result) {
         if(result.data.length >0){
             //exists
-          existingBookmark = result.data[1];
+          existingBookmark = result.data[0];
           document.getElementById('create').innerHTML = 'Save';
           for(const tag of existingBookmark.tags){
              $scope.tags +=tag + ',';
@@ -181,7 +181,7 @@ function showBookmarks (token) {
     };
 
    if (existingBookmark){
-  
+ //    alert("update");
      $http.put('https://v.zhaodong.name/api/link/'+existingBookmark.id,
      body,
       {   
@@ -196,7 +196,7 @@ function showBookmarks (token) {
         alert("bookmark created failed " + JSON.stringify(error));
      });
    } else {
- //    alert("new bookmark");
+  //   alert("new bookmark");
      $http.post('https://v.zhaodong.name/api/link/create',
       body,
       {
