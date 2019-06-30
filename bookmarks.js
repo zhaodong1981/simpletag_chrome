@@ -69,7 +69,6 @@ mainApp.controller('bookmarkController', function($scope, $http) {
 function showBookmarks (token) {
 
 //check if the URL exists
-  
       $http.get('https://v.zhaodong.name/api/link/search?url=' + $scope.page.url,{headers: {'Authorization': 'Bearer ' + token }}).then(function (result) {
         if(result.data.length >0){
             //exists
@@ -157,33 +156,8 @@ function showBookmarks (token) {
    searchBtn.onclick = function() {
     search();
    };
-   let keywordInput = document.getElementById('keywords');
-   keywordInput.addEventListener("keyup", function(event) {
-      if (event.key === "Enter") {
-        search();
-      }
-   });
-   */
-   function formatTags(oldtags){
-    let tempTags = [];
-    if(typeof oldtags !== 'undefined' && oldtags && oldtags.constructor === Array){
-      tempTags = oldtags;
-    } else if (typeof oldtags === 'string'){
-      tempTags = oldtags.split(',');
-    } 
-  
-    let validTags = [];
-    for (const tag of tempTags ){
-      if (tag !== ''){
-        validTags.push(tag);
-      }
-    }
-    return validTags;
-  }
-  
-  let createBtn = document.getElementById('create');
-  
-  createBtn.onclick = function() {
+*/
+   function saveCreate(){
     if (token === ''){
       alert('Not login');
       return;
@@ -238,6 +212,34 @@ function showBookmarks (token) {
      });
      //window.close();
    }
-    
- }
+   }
+   let tagsInput = document.getElementById('tags');
+   tagsInput.addEventListener("keyup", function(event) {
+      if (event.key === "Enter") {
+        saveCreate();
+      }
+   });
+   
+   function formatTags(oldtags){
+    let tempTags = [];
+    if(typeof oldtags !== 'undefined' && oldtags && oldtags.constructor === Array){
+      tempTags = oldtags;
+    } else if (typeof oldtags === 'string'){
+      tempTags = oldtags.split(',');
+    } 
+  
+    let validTags = [];
+    for (const tag of tempTags ){
+      if (tag !== ''){
+        validTags.push(tag);
+      }
+    }
+    return validTags;
+  }
+  
+  let createBtn = document.getElementById('create');
+  
+  createBtn.onclick = function() {
+    saveCreate();
+  }
 });
