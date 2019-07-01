@@ -164,6 +164,7 @@ function showBookmarks (token) {
     }
 
     $scope.message = 'Waiting';
+    document.getElementById("create").disabled = true;
   
     let tags = formatTags (document.getElementById('tags').value);
     var url = document.getElementById('url').value;
@@ -197,6 +198,7 @@ function showBookmarks (token) {
         console.error('Error during updating bookmark:', error);
         alert("bookmark udpated failed " + JSON.stringify(error));
         $scope.message = "bookmark update failed " + JSON.stringify(error);
+        document.getElementById("create").disabled = false;
      });
    } else {
   //   alert("new bookmark");
@@ -214,6 +216,7 @@ function showBookmarks (token) {
         console.error('Error during create bookmark:', error);
         alert("bookmark created failed " + JSON.stringify(error));
         $scope.message = "bookmark created failed " + JSON.stringify(error);
+        document.getElementById("create").disabled = false;
      });
      //window.close();
    }
