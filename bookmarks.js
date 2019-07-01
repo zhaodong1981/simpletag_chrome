@@ -162,8 +162,9 @@ function showBookmarks (token) {
       alert('Not login');
       return;
     }
-    
-   // alert('Not login');
+
+    $scope.message = 'Waiting';
+  
     let tags = formatTags (document.getElementById('tags').value);
     var url = document.getElementById('url').value;
     var title = document.getElementById('title').value;
@@ -190,10 +191,12 @@ function showBookmarks (token) {
         }
       ).then(function() {
         console.log("bookmark updated");
+        $scope.message = "bookmark updated";
         window.close();
       }).catch(error => {
         console.error('Error during updating bookmark:', error);
-        alert("bookmark created failed " + JSON.stringify(error));
+        alert("bookmark udpated failed " + JSON.stringify(error));
+        $scope.message = "bookmark update failed " + JSON.stringify(error);
      });
    } else {
   //   alert("new bookmark");
@@ -205,10 +208,12 @@ function showBookmarks (token) {
         }
       ).then(function() {
         console.log("bookmark created");
+        $scope.message = "bookmark created";
         window.close();
       }).catch(error => {
         console.error('Error during create bookmark:', error);
         alert("bookmark created failed " + JSON.stringify(error));
+        $scope.message = "bookmark created failed " + JSON.stringify(error);
      });
      //window.close();
    }
