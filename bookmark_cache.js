@@ -1,6 +1,6 @@
 //pull bookmarks periodically.
 
-chrome.alarms.create({periodInMinutes: 2});
+chrome.alarms.create({periodInMinutes: 10});
 
 chrome.alarms.onAlarm.addListener(function(alarm) {
    //updating cached bookmarks.

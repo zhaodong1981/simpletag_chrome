@@ -1,7 +1,7 @@
 'use strict';
 var mainApp = angular.module("mainApp", []);
 
-const CACHE_LIFE_LIMIT = 10; //cached bookmarks valid for 5 mins. 
+const CACHE_LIFE_LIMIT = 15; //cached bookmarks valid for 15 mins. 
 
 //display existing tags
 mainApp.controller('bookmarkController', function($scope, $http) {
