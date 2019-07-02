@@ -97,8 +97,7 @@ function showBookmarks(bookmarks){
 }
 function processBookmarks (token) {
 
-  var tags = ['xyz','123','yyy'];
-  autocomplete(document.getElementById("tags"), tags);
+ // var tags = ['xyz','123','yyy'];
 //check if the URL exists
       $http.get('https://v.zhaodong.name/api/link/search?url=' + $scope.page.url,{headers: {'Authorization': 'Bearer ' + token }}).then(function (result) {
      //   $scope.message = 'Loading bookmark count done';
@@ -148,7 +147,14 @@ function processBookmarks (token) {
         });
         }
       });
-
+      chrome.storage.local.get(['tags_data'], function(result) {
+        if (result.tags_data){
+          //tags found
+          let tags = result.tags_data.map(a => a.tag);
+      //    alert(tags);
+          autocomplete(document.getElementById("tags"), tags);
+        }
+      });
     
   };
 
