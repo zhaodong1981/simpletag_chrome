@@ -145,6 +145,20 @@ function processBookmarks (token) {
         }).catch({
           // alert("load bookmark failed");
         });
+
+        fetch('https://v.zhaodong.name/api/tag',
+        {headers: {'Authorization': 'Bearer ' + token }})
+        .then(res => res.json()).then(result => {
+      //  alert("bookmakrs="+JSON.stringify(result.data));    
+            const tags = result;
+           // alert("tags="+JSON.stringify(tags));
+            chrome.storage.local.set({
+                tags_data: tags
+            }, function() {
+             //   alert("bookmark updated");
+            });
+        });
+        
         }
       });
       chrome.storage.local.get(['tags_data'], function(result) {
