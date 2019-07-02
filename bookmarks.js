@@ -68,7 +68,7 @@ mainApp.controller('bookmarkController', function($scope, $http) {
             return user;
         });
 };
-function showBookmarks(bookmarks){
+async function showBookmarks(bookmarks){
   if(typeof bookmarks === 'undefined' || bookmarks.constructor !== Array){
     $scope.message = 'No bookmarks';
     return;
@@ -127,10 +127,10 @@ function processBookmarks (token) {
           showBookmarks(result.bookmark_data.bookmarks);
         } else{
           $scope.message = 'Loading bookmarks';
-          $http.get('https://v.zhaodong.name/api/link?per_page=100&page=1',{headers: {'Authorization': 'Bearer ' + token }}).then(function (result) {
+          $http.get('https://v.zhaodong.name/api/link',{headers: {'Authorization': 'Bearer ' + token }}).then(function (result) {
             $scope.message = 'Loading bookmark done';
           //    $scope.bookmarks =result.data.data;
-            const bookmarks = result.data.data;
+            const bookmarks = result.data;
 
             chrome.storage.local.set({
               bookmark_data: {bookmarks:bookmarks, updated: Date.now()}
@@ -157,6 +157,8 @@ function processBookmarks (token) {
             }, function() {
              //   alert("bookmark updated");
             });
+            let tags1 = tags.map(a => a.tag);
+            autocomplete(document.getElementById("tags"), tags1);
         });
 
         }
