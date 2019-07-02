@@ -158,7 +158,7 @@ function processBookmarks (token) {
              //   alert("bookmark updated");
             });
         });
-        
+
         }
       });
       chrome.storage.local.get(['tags_data'], function(result) {
@@ -282,13 +282,14 @@ function processBookmarks (token) {
      //window.close();
    }
    }
+   /*
    let tagsInput = document.getElementById('tags');
    tagsInput.addEventListener("keyup", function(event) {
       if (event.key === "Enter") {
         saveCreate();
       }
    });
-   
+   */
    function formatTags(oldtags){
     let tempTags = [];
     if(typeof oldtags !== 'undefined' && oldtags && oldtags.constructor === Array){
