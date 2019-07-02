@@ -1,6 +1,7 @@
 'use strict';
 var mainApp = angular.module("mainApp", []);
- 
+
+const CACHE_LIFE_LIMIT = 10; //cached bookmarks valid for 5 mins. 
 
 //display existing tags
 mainApp.controller('bookmarkController', function($scope, $http) {
@@ -8,6 +9,8 @@ mainApp.controller('bookmarkController', function($scope, $http) {
   let token ='';
   $scope.tags ='';
   var existingBookmark;
+  var saveCreateButton = document.getElementById("create");
+  saveCreateButton.disabled = true;
   //get URL and title of current tab
   chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
     $scope.page={"title": tabs[0].title, "url": tabs[0].url};
@@ -17,21 +20,21 @@ mainApp.controller('bookmarkController', function($scope, $http) {
   chrome.storage.local.get(['token','username','password'], function(result) {
     if (result.token){
       token = result.token;
-      showBookmarks(token);
+      processBookmarks(token);
  
     } else if(result.username && result.password){
      // alert("Need to login");
       login(result.username,result.password).then((result) => {
         token = result.token;
-        showBookmarks(token)
+        processBookmarks(token)
      }
     
      ).catch(error => {
        alert('login failed' +  JSON.stringify(error));});
+    } else{
+      alert('Username or password not set. Please set them in the options page.');
     }
   });
-
-
 
   function handleResponse(response) {
     return response.text().then(text => {
@@ -65,50 +68,86 @@ mainApp.controller('bookmarkController', function($scope, $http) {
             return user;
         });
 };
+function showBookmarks(bookmarks){
+  if(typeof bookmarks === 'undefined' || bookmarks.constructor !== Array){
+    $scope.message = 'No bookmarks';
+    return;
+  }
+  //   alert("Time elapsed: " + new Date() - start);
+   for(const bookmark of bookmarks){
 
-function showBookmarks (token) {
+    var row1 = "<tr><td>" +  "<a href=\""+bookmark.url + "\" target=\"_blank\" >"+bookmark.title+"</a>" +"</td> <td>";
+  
+    for (const tag of bookmark.tags){
+      row1 += "<a href=\"https://v.zhaodong.name/tag/tag.html#?name="+tag + "\" target=\"_blank\" style=\"margin: 5px\">"+tag+"</a>"
+    }
+
+    row1+="</td></tr>";
+    $("#bookmarkTable").append(row1);
+        
+  }
+
+      // And make them fancy
+  $("#bookmarkTable").fancyTable({
+//       sortColumn:0,
+    pagination: true,
+    perPage:10,
+    globalSearch:true
+  });
+}
+function processBookmarks (token) {
 
 //check if the URL exists
       $http.get('https://v.zhaodong.name/api/link/search?url=' + $scope.page.url,{headers: {'Authorization': 'Bearer ' + token }}).then(function (result) {
+     //   $scope.message = 'Loading bookmark count done';
         if(result.data.length >0){
             //exists
           existingBookmark = result.data[0];
           document.getElementById('create').innerHTML = 'Save';
+          
           for(const tag of existingBookmark.tags){
              $scope.tags +=tag + ',';
           }
+
+        }
+        saveCreateButton.disabled = false;
+      });
+
+      chrome.storage.local.get(['bookmark_data'], function(result) {
+      //  alert("local storage " + JSON.stringify(result));
+     
+        var elapsed = CACHE_LIFE_LIMIT + 1;
+        if (result.bookmark_data &&  result.bookmark_data.updated){
+          elapsed = Math.floor((Date.now() - result.bookmark_data.updated)/1000/60);
+        }
+  
+        if (elapsed <= CACHE_LIFE_LIMIT){
+          $scope.message = "Bookmarks loaded. Updated " + elapsed + " mins ago";
+          showBookmarks(result.bookmark_data.bookmarks);
+        } else{
+          $scope.message = 'Loading bookmarks';
+          $http.get('https://v.zhaodong.name/api/link?per_page=100&page=1',{headers: {'Authorization': 'Bearer ' + token }}).then(function (result) {
+            $scope.message = 'Loading bookmark done';
+          //    $scope.bookmarks =result.data.data;
+            const bookmarks = result.data.data;
+
+            chrome.storage.local.set({
+              bookmark_data: {bookmarks:bookmarks, updated: Date.now()}
+            }, function() {
+              
+            });
+
+          $scope.message = 'Bookmarks loaded from server: ' + bookmarks.length;
+          showBookmarks(bookmarks);
+    
+          $scope.message = 'Done';
+        }).catch({
+          // alert("load bookmark failed");
+        });
         }
       });
-      
-      
-      $http.get('https://v.zhaodong.name/api/link',{headers: {'Authorization': 'Bearer ' + token }}).then(function (result) {
-    //    $scope.bookmarks =result.data.data;
-        const bookmarks = result.data;
-      
-        	// Generate a big table
-      for(const bookmark of bookmarks){
 
-        var row1 = "<tr><td>" +  "<a href=\""+bookmark.url + "\" target=\"_blank\" >"+bookmark.title+"</a>" +"</td> <td>";
-      
-        for (const tag of bookmark.tags){
-          row1 += "<a href=\"https://v.zhaodong.name/tag/tag.html#?name="+tag + "\" target=\"_blank\" style=\"margin: 5px\">"+tag+"</a>"
-        }
-
-        row1+="</td></tr>";
-        $("#bookmarkTable").append(row1);
-            
-      }
-          // And a simple one
-          
-
-          // And make them fancy
-      $("#bookmarkTable").fancyTable({
- //       sortColumn:0,
-        pagination: true,
-        perPage:10,
-        globalSearch:true
-      });
-    });
+    
   };
 
   function search () {
@@ -164,7 +203,7 @@ function showBookmarks (token) {
     }
 
     $scope.message = 'Waiting';
-    document.getElementById("create").disabled = true;
+    saveCreateButton.disabled = true;
   
     let tags = formatTags (document.getElementById('tags').value);
     var url = document.getElementById('url').value;
@@ -198,7 +237,7 @@ function showBookmarks (token) {
         console.error('Error during updating bookmark:', error);
         alert("bookmark udpated failed " + JSON.stringify(error));
         $scope.message = "bookmark update failed " + JSON.stringify(error);
-        document.getElementById("create").disabled = false;
+        saveCreateButton.disabled = false;
      });
    } else {
   //   alert("new bookmark");
