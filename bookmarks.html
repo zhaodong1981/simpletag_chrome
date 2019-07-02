@@ -34,7 +34,9 @@
     <p></p>
     <div class="form-row">
         <label class="font-weight-bold col-sm-1">Tags</label>
-        <input type="text" id="tags" class="form-control col-sm-11" placeholder="Input your tags here, separated by ," value="{{ tags }}"/>
+        <div class="autocomplete col-sm-11">
+          <input type="text" id="tags" class="form-control" placeholder="Input your tags here, separated by ," value="{{ tags }}"/>
+        </div>
     </div>
     <p></p>
     <button id="create" type="button" class="btn btn-primary">Create</button>
@@ -55,6 +57,7 @@
  </div>
  
 <script src="lib/fancyTable.js"></script>
-  <script src="bookmarks.js"></script>
+<script src="lib/autocomplete.js"></script>
+<script src="bookmarks.js"></script>
 </body>
 </html>
