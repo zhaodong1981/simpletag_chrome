@@ -83,6 +83,7 @@ async function showBookmarks(bookmarks){
   } else{
     document.getElementById('loadandshow').innerHTML = 'Show Bookmarks';
     $("#bookmarkTable").hide();
+    return;
   }
   
   //   alert("Time elapsed: " + new Date() - start);
