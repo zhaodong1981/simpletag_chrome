@@ -78,8 +78,11 @@ async function showBookmarks(bookmarks){
     return;
   }
   if(document.getElementById('loadandshow').innerHTML === 'Show Bookmarks'){
-    document.getElementById('loadandshow').innerHTML = 'Refresh Bookmarks';
+    document.getElementById('loadandshow').innerHTML = 'Hide Bookmarks';
     $("#bookmarkTable").show();
+  } else{
+    document.getElementById('loadandshow').innerHTML = 'Show Bookmarks';
+    $("#bookmarkTable").hide();
   }
   
   //   alert("Time elapsed: " + new Date() - start);
