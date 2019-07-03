@@ -23,12 +23,14 @@ mainApp.controller('bookmarkController', function($scope, $http) {
     if (result.token){
       token = result.token;
       prepare4Creation();
+   //   loadAndShowBookmarks();
  
     } else if(result.username && result.password){
      // alert("Need to login");
       login(result.username,result.password).then((result) => {
         token = result.token;
-        prepare4Creation()
+        prepare4Creation();
+//      loadAndShowBookmarks();
      }
     
      ).catch(error => {
@@ -77,6 +79,11 @@ async function showBookmarks(bookmarks){
   }
   
   //   alert("Time elapsed: " + new Date() - start);
+  $("#bookmarkTable tboby").empty(); // clear all rows
+  if($("#bookmark_table_head tr").length > 1){ // the search box added last time
+    $("#bookmark_table_head tr:last-child").remove();
+  }
+  var html = [];
    for(const bookmark of bookmarks){
 
     var row1 = "<tr><td>" +  "<a href=\""+bookmark.url + "\" target=\"_blank\" >"+bookmark.title+"</a>" +"</td> <td>";
@@ -86,10 +93,9 @@ async function showBookmarks(bookmarks){
     }
 
     row1+="</td></tr>";
-    $("#bookmarkTable").append(row1);
-        
+    html.push(row1);        
   }
-
+  $("#bookmarkTable > tbody:last-child").append(html.join(''));
       // And make them fancy
       
   $("#bookmarkTable").fancyTable({
