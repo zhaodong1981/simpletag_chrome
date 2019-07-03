@@ -3,10 +3,12 @@ var mainApp = angular.module("mainApp", []);
 
 const CACHE_LIFE_LIMIT = 15; //cached bookmarks valid for 15 mins. 
 
+var token ='';
+
 //display existing tags
 mainApp.controller('bookmarkController', function($scope, $http) {
   $scope.bookmarks = [];
-  let token ='';
+  
   $scope.tags ='';
   var existingBookmark;
   var saveCreateButton = document.getElementById("create");
@@ -20,13 +22,13 @@ mainApp.controller('bookmarkController', function($scope, $http) {
   chrome.storage.local.get(['token','username','password'], function(result) {
     if (result.token){
       token = result.token;
-      processBookmarks(token);
+      prepare4Creation();
  
     } else if(result.username && result.password){
      // alert("Need to login");
       login(result.username,result.password).then((result) => {
         token = result.token;
-        processBookmarks(token)
+        prepare4Creation()
      }
     
      ).catch(error => {
@@ -73,6 +75,7 @@ async function showBookmarks(bookmarks){
     $scope.message = 'No bookmarks';
     return;
   }
+  
   //   alert("Time elapsed: " + new Date() - start);
    for(const bookmark of bookmarks){
 
@@ -88,14 +91,67 @@ async function showBookmarks(bookmarks){
   }
 
       // And make them fancy
+      
   $("#bookmarkTable").fancyTable({
 //       sortColumn:0,
     pagination: true,
     perPage:10,
     globalSearch:true
   });
+  
 }
-function processBookmarks (token) {
+function loadAndShowBookmarks(){
+  chrome.storage.local.get(['bookmark_data'], function(result) {
+    //  alert("local storage " + JSON.stringify(result));
+   
+      var elapsed = CACHE_LIFE_LIMIT + 1;
+      if (result.bookmark_data &&  result.bookmark_data.updated){
+        elapsed = Math.floor((Date.now() - result.bookmark_data.updated)/1000/60);
+      }
+
+      if (elapsed <= CACHE_LIFE_LIMIT){
+        $scope.message = "Bookmarks loaded. Updated " + elapsed + " mins ago";
+        showBookmarks(result.bookmark_data.bookmarks);
+      } else{
+        $scope.message = 'Loading bookmarks';
+        $http.get('https://v.zhaodong.name/api/link',{headers: {'Authorization': 'Bearer ' + token }}).then(function (result) {
+          $scope.message = 'Loading bookmark done';
+        //    $scope.bookmarks =result.data.data;
+          const bookmarks = result.data;
+
+          chrome.storage.local.set({
+            bookmark_data: {bookmarks:bookmarks, updated: Date.now()}
+          }, function() {
+            
+          });
+
+        $scope.message = 'Bookmarks loaded from server: ' + bookmarks.length;
+        showBookmarks(bookmarks);
+  
+        $scope.message = 'Done';
+      }).catch({
+        // alert("load bookmark failed");
+      });
+
+      fetch('https://v.zhaodong.name/api/tag',
+      {headers: {'Authorization': 'Bearer ' + token }})
+      .then(res => res.json()).then(result => {
+    //  alert("bookmakrs="+JSON.stringify(result.data));    
+          const tags = result;
+         // alert("tags="+JSON.stringify(tags));
+          chrome.storage.local.set({
+              tags_data: tags
+          }, function() {
+           //   alert("bookmark updated");
+          });
+          let tags1 = tags.map(a => a.tag);
+          autocomplete(document.getElementById("tags"), tags1);
+      });
+
+      }
+    });
+}
+function prepare4Creation () {
 
  // var tags = ['xyz','123','yyy'];
 //check if the URL exists
@@ -112,56 +168,6 @@ function processBookmarks (token) {
 
         }
         saveCreateButton.disabled = false;
-      });
-
-      chrome.storage.local.get(['bookmark_data'], function(result) {
-      //  alert("local storage " + JSON.stringify(result));
-     
-        var elapsed = CACHE_LIFE_LIMIT + 1;
-        if (result.bookmark_data &&  result.bookmark_data.updated){
-          elapsed = Math.floor((Date.now() - result.bookmark_data.updated)/1000/60);
-        }
-  
-        if (elapsed <= CACHE_LIFE_LIMIT){
-          $scope.message = "Bookmarks loaded. Updated " + elapsed + " mins ago";
-          showBookmarks(result.bookmark_data.bookmarks);
-        } else{
-          $scope.message = 'Loading bookmarks';
-          $http.get('https://v.zhaodong.name/api/link',{headers: {'Authorization': 'Bearer ' + token }}).then(function (result) {
-            $scope.message = 'Loading bookmark done';
-          //    $scope.bookmarks =result.data.data;
-            const bookmarks = result.data;
-
-            chrome.storage.local.set({
-              bookmark_data: {bookmarks:bookmarks, updated: Date.now()}
-            }, function() {
-              
-            });
-
-          $scope.message = 'Bookmarks loaded from server: ' + bookmarks.length;
-          showBookmarks(bookmarks);
-    
-          $scope.message = 'Done';
-        }).catch({
-          // alert("load bookmark failed");
-        });
-
-        fetch('https://v.zhaodong.name/api/tag',
-        {headers: {'Authorization': 'Bearer ' + token }})
-        .then(res => res.json()).then(result => {
-      //  alert("bookmakrs="+JSON.stringify(result.data));    
-            const tags = result;
-           // alert("tags="+JSON.stringify(tags));
-            chrome.storage.local.set({
-                tags_data: tags
-            }, function() {
-             //   alert("bookmark updated");
-            });
-            let tags1 = tags.map(a => a.tag);
-            autocomplete(document.getElementById("tags"), tags1);
-        });
-
-        }
       });
       chrome.storage.local.get(['tags_data'], function(result) {
         if (result.tags_data){
@@ -190,6 +196,11 @@ function processBookmarks (token) {
           $scope.bookmarks =result.data.data;
        });
       }
+  }
+
+  let loadAndShowButton = document.getElementById('loadandshow');
+  loadAndShowButton.onclick = function (){
+    loadAndShowBookmarks();
   }
    let logoutBtn = document.getElementById('logout');
    logoutBtn.onclick = function() {
