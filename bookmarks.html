@@ -24,13 +24,18 @@
   <div ng-app = "mainApp" ng-controller = "bookmarkController" >
 
     <div class="form-row">
+      
         <label class="font-weight-bold col-sm-1">Title</label>
-        <input type="text" id="title" class="form-control col-sm-11" value="{{ page.title }}"/>
+        <div class="autocomplete col-sm-11">
+          <input type="text" id="title" class="form-control" value="{{ page.title }}"/>
+        </div>
     </div>
     <p></p>
     <div class="form-row">
         <label class="font-weight-bold col-sm-1">URL</label>
-        <input type="text" id="url" class="form-control col-sm-11" value="{{ page.url }}" readonly/>
+        <div class="autocomplete col-sm-11">
+          <input type="text" id="url" class="form-control" value="{{ page.url }}" readonly/>
+        </div>
     </div>
     <p></p>
     <div class="form-row">
@@ -40,7 +45,8 @@
         </div>
     </div>
     <p></p>
-    <button id="create" type="button" class="btn btn-primary">Create</button>
+    
+    <button id="create" type="button" class="btn btn-primary btn-block">Create</button>
     <p></p>
     <button id="loadandshow" type="button" class="btn btn-secondary">Show Bookmarks</button>
     <a href="https://v.zhaodong.name/tag/"  target="_blank" style="float:right;">Bookmark Page</a>
