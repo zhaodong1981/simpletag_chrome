@@ -77,6 +77,10 @@ async function showBookmarks(bookmarks){
     $scope.message = 'No bookmarks';
     return;
   }
+  if(document.getElementById('loadandshow').innerHTML === 'Show Bookmarks'){
+    document.getElementById('loadandshow').innerHTML = 'Refresh Bookmarks';
+    $("#bookmarkTable").show();
+  }
   
   //   alert("Time elapsed: " + new Date() - start);
   $("#bookmarkTable tboby").empty(); // clear all rows
