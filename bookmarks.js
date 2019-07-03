@@ -99,7 +99,7 @@ function processBookmarks (token) {
 
  // var tags = ['xyz','123','yyy'];
 //check if the URL exists
-      $http.get('https://v.zhaodong.name/api/link/search?url=' + $scope.page.url,{headers: {'Authorization': 'Bearer ' + token }}).then(function (result) {
+      $http.get('https://v.zhaodong.name/api/link/search?url=' + encodeURIComponent($scope.page.url),{headers: {'Authorization': 'Bearer ' + token }}).then(function (result) {
      //   $scope.message = 'Loading bookmark count done';
         if(result.data.length >0){
             //exists
