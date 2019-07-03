@@ -8,7 +8,6 @@ var token ='';
 //display existing tags
 mainApp.controller('bookmarkController', function($scope, $http) {
   $scope.bookmarks = [];
-  
   $scope.tags ='';
   var existingBookmark;
   var saveCreateButton = document.getElementById("create");
@@ -73,8 +72,9 @@ mainApp.controller('bookmarkController', function($scope, $http) {
         });
 };
 async function showBookmarks(bookmarks){
+  var status = document.getElementById('status');
   if(typeof bookmarks === 'undefined' || bookmarks.constructor !== Array){
-    $scope.message = 'No bookmarks';
+    status.textContent = 'No bookmarks';
     return;
   }
   if(document.getElementById('loadandshow').innerHTML === 'Show Bookmarks'){
@@ -82,6 +82,7 @@ async function showBookmarks(bookmarks){
     $("#bookmarkTable").show();
   } else{
     document.getElementById('loadandshow').innerHTML = 'Show Bookmarks';
+    status.textContent = '';
     $("#bookmarkTable").hide();
     return;
   }
@@ -122,14 +123,14 @@ function loadAndShowBookmarks(){
       if (result.bookmark_data &&  result.bookmark_data.updated){
         elapsed = Math.floor((Date.now() - result.bookmark_data.updated)/1000/60);
       }
-
+      var status = document.getElementById('status');
       if (elapsed <= CACHE_LIFE_LIMIT){
-        $scope.message = "Bookmarks loaded. Updated " + elapsed + " mins ago";
+        status.textContent = "Bookmarks loaded. Updated " + elapsed + " mins ago";
         showBookmarks(result.bookmark_data.bookmarks);
       } else{
-        $scope.message = 'Loading bookmarks';
+        status.textContent = 'Loading bookmarks';
         $http.get('https://v.zhaodong.name/api/link',{headers: {'Authorization': 'Bearer ' + token }}).then(function (result) {
-          $scope.message = 'Loading bookmark done';
+          status.textContent = 'Loading bookmark done';
         //    $scope.bookmarks =result.data.data;
           const bookmarks = result.data;
 
@@ -139,10 +140,10 @@ function loadAndShowBookmarks(){
             
           });
 
-        $scope.message = 'Bookmarks loaded from server: ' + bookmarks.length;
+          status.textContent = 'Bookmarks loaded from server: ' + bookmarks.length;
         showBookmarks(bookmarks);
   
-        $scope.message = 'Done';
+        status.textContent = 'Done';
       }).catch({
         // alert("load bookmark failed");
       });
@@ -250,8 +251,8 @@ function prepare4Creation () {
       alert('Not login');
       return;
     }
-
-    $scope.message = 'Waiting';
+    var status = document.getElementById('status')
+    status.textContent = 'Waiting';
     saveCreateButton.disabled = true;
   
     let tags = formatTags (document.getElementById('tags').value);
@@ -269,7 +270,7 @@ function prepare4Creation () {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + token 
     };
-
+    var status = document.getElementById('status');
    if (existingBookmark){
  //    alert("update");
      $http.put('https://v.zhaodong.name/api/link/'+existingBookmark.id,
@@ -280,12 +281,12 @@ function prepare4Creation () {
         }
       ).then(function() {
         console.log("bookmark updated");
-        $scope.message = "bookmark updated";
+        status.textContent= "bookmark updated";
         window.close();
       }).catch(error => {
         console.error('Error during updating bookmark:', error);
         alert("bookmark udpated failed " + JSON.stringify(error));
-        $scope.message = "bookmark update failed " + JSON.stringify(error);
+        status.textContent = "bookmark update failed " + JSON.stringify(error);
         saveCreateButton.disabled = false;
      });
    } else {
@@ -298,12 +299,12 @@ function prepare4Creation () {
         }
       ).then(function() {
         console.log("bookmark created");
-        $scope.message = "bookmark created";
+        status.textContent = "bookmark created";
         window.close();
       }).catch(error => {
         console.error('Error during create bookmark:', error);
         alert("bookmark created failed " + JSON.stringify(error));
-        $scope.message = "bookmark created failed " + JSON.stringify(error);
+        status.textContent = "bookmark created failed " + JSON.stringify(error);
         document.getElementById("create").disabled = false;
      });
      //window.close();
