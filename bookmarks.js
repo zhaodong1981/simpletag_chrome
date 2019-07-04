@@ -11,13 +11,32 @@ mainApp.controller('bookmarkController', function($scope, $http) {
   $scope.bookmarks = [];
   $scope.tags ='';
   var existingBookmark;
+  var tagsInput = document.getElementById('tags');
+  var titleInput = document.getElementById('title')
   var saveCreateButton = document.getElementById("create");
-  saveCreateButton.disabled = true;
+  var showHideButton = document.getElementById("showorhide");
+  var forceUpdateButton = document.getElementById('forceupdate');
+  disableControls();
   //get URL and title of current tab
   chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
     $scope.page={"title": tabs[0].title, "url": tabs[0].url};
   
   });
+
+  function showStatus(message,spinner){
+    var status = document.getElementById('status');
+    status.textContent = message;
+    if(spinner===1){
+      $("#spinner_status").show();
+    }else{
+      $("#spinner_status").hide();
+    }
+  }
+  function clearStatus(){
+    var status = document.getElementById('status');
+    status.textContent = '';
+    $("#spinner_status").hide();
+  }
 
   chrome.storage.local.get(['token','username','password'], function(result) {
     if (result.token){
@@ -104,10 +123,9 @@ function showBookmarks(bookmarks){
 }
 
 function forceUpdate(bookmarkCallback){
-  var status = document.getElementById('status');
-  status.textContent = 'Loading bookmarks ...';
+  showStatus('Loading bookmarks from server ...', 1);
   $http.get('https://v.zhaodong.name/api/link',{headers: {'Authorization': 'Bearer ' + token }}).then(function (result) {
-     status.textContent = 'Loading bookmark done';
+     clearStatus();
    //    $scope.bookmarks =result.data.data;
      const bookmarks = result.data;
 
@@ -117,7 +135,7 @@ function forceUpdate(bookmarkCallback){
        
      });
 
-     status.textContent = 'Bookmarks loaded from server: ' + bookmarks.length;
+    showStatus('Bookmarks loaded from server: ' + bookmarks.length,0);
      if(bookmarkCallback){
       bookmarkCallback(bookmarks);
      }
@@ -143,16 +161,17 @@ function forceUpdate(bookmarkCallback){
  });
 }
 function showHideBookmarks(){
-  var status = document.getElementById('status');
   if(bookmarktable_visible === 1){
     //document.getElementById('showorhide').innerHTML = 'Show Bookmarks';
     bookmarktable_visible = 0;
-    document.getElementById('showorhide').innerHTML = '<i class="far fa-eye-slash"></i> Show Bookmarks';
+    showHideButton.innerHTML = '<i class="far fa-eye-slash"></i> Show Bookmarks';
     clearBookmarkTable();
     $("#bookmarkTable").hide();
-    status.textContent = '';
+    clearStatus();
     return;
   }
+  disableControls();
+  showStatus("Loading bookmarks from cache ", 1);
   chrome.storage.local.get(['bookmark_data'], function(result) {
     //  alert("local storage " + JSON.stringify(result));
    
@@ -161,42 +180,47 @@ function showHideBookmarks(){
         elapsed = Math.floor((Date.now() - result.bookmark_data.updated)/1000/60);
       }
       if (elapsed <= CACHE_LIFE_LIMIT){
-        status.textContent = "Bookmarks loaded. Updated " + elapsed + " mins ago";
+        showStatus("Bookmarks loaded. Updated " + elapsed + " mins ago",0);
         var bookmarks = result.bookmark_data.bookmarks;
       
         if(typeof bookmarks === 'undefined' || bookmarks.constructor !== Array){
-          status.textContent = 'No bookmarks';
+          showStatus('No bookmarks',0);
           return;
         }
         //document.getElementById('showorhide').innerHTML = 'Hide Bookmarks';
         bookmarktable_visible = 1;
-        document.getElementById('showorhide').innerHTML='<i class="far fa-eye-slash"></i> Hide Bookmarks';
+        showHideButton.innerHTML='<i class="far fa-eye-slash"></i> Hide Bookmarks';
         showBookmarks(bookmarks);
         $("#bookmarkTable").show();
+        
       } else{
         forceUpdate(showBookmarks);
       }
+      enableControls();
     });
 }
 function prepare4Creation () {
 
  // var tags = ['xyz','123','yyy'];
 //check if the URL exists
+  showStatus('Checking if bookmark exists ...',1);
       $http.get('https://v.zhaodong.name/api/link/search?url=' + encodeURIComponent($scope.page.url),{headers: {'Authorization': 'Bearer ' + token }}).then(function (result) {
      //   $scope.message = 'Loading bookmark count done';
         if(result.data.length >0){
             //exists
           existingBookmark = result.data[0];
-          document.getElementById('create').innerHTML = 'Save';
+          saveCreateButton.innerHTML = 'Save';
           
           for(const tag of existingBookmark.tags){
              $scope.tags +=tag + ',';
           }
 
         }
-        saveCreateButton.disabled = false;
+        enableControls();
+        showStatus('',0);
       }).catch(function (error){
         alert("Failed to check existence of a bookmark with the same URL: " + error);
+        enableControls();
       });
       
       chrome.storage.local.get(['tags_data'], function(result) {
@@ -204,7 +228,7 @@ function prepare4Creation () {
           //tags found
           let tags = result.tags_data.map(a => a.tag);
       //    alert(tags);
-          autocomplete(document.getElementById("tags"), tags);
+          autocomplete(tagsInput, tags);
         }
       });
     
@@ -227,20 +251,38 @@ function prepare4Creation () {
        });
       }
   }
+  function disableControls(){
+      forceUpdateButton.disabled = true;
+      saveCreateButton.disabled = true;
+      showHideButton.disabled = true;
+      tagsInput.disabled = true;
+      titleInput.disabled = true;
+  }
 
-  let showHideButton = document.getElementById('showorhide');
+  function enableControls(disable){
+      forceUpdateButton.disabled = false;
+      saveCreateButton.disabled = false;
+      showHideButton.disabled = false;
+      tagsInput.disabled = false;
+      titleInput.disabled = false;
+  }
+//  let showHideButton = document.getElementById('showorhide');
   showHideButton.onclick = function (){
     showHideBookmarks();
   }
-  let forceUpdateButton = document.getElementById('forceupdate');
+  
   forceUpdateButton.onclick = function (){
+    disableControls();
     if(bookmarktable_visible === 1){
       forceUpdate(function(bookmarks){//bookmark table visible, refresh it
         clearBookmarkTable();
         showBookmarks(bookmarks);
+        enableControls();
       });
     }else{//bookmark table not visible, only refresh cache
-      forceUpdate();
+      forceUpdate(function(){
+        enableControls();
+      });
     }
     
   }
@@ -279,12 +321,13 @@ function prepare4Creation () {
       return;
     }
     var status = document.getElementById('status')
-    status.textContent = 'Waiting';
-    saveCreateButton.disabled = true;
+    //status.textContent = 'Waiting';
+    showStatus('Waiting', 1);
+    disableControls();
   
-    let tags = formatTags (document.getElementById('tags').value);
+    let tags = formatTags (tagsInput.value);
     var url = document.getElementById('url').value;
-    var title = document.getElementById('title').value;
+    var title = titleInput.value;
     var body =    JSON.stringify({
       'title': title,
       'url': url,
@@ -307,15 +350,14 @@ function prepare4Creation () {
           headers: headers
         }
       ).then(function() {
-        console.log("bookmark updated");
-        status.textContent= "bookmark updated";
-        saveCreateButton.disabled = false;
+        showStatus("Bookmark updated", 0);
+        enableControls();
       //  window.close();
       }).catch(error => {
         console.error('Error during updating bookmark:', error);
         alert("bookmark udpated failed " + JSON.stringify(error));
-        status.textContent = "bookmark update failed " + JSON.stringify(error);
-        saveCreateButton.disabled = false;
+        showStatus("Failed to update bookmark: " + JSON.stringify(error),0);
+        enableControls();
      });
    } else {
   //   alert("new bookmark");
@@ -327,14 +369,14 @@ function prepare4Creation () {
         }
       ).then(function() {
         console.log("bookmark created");
-        status.textContent = "bookmark created";
-        saveCreateButton.disabled = false;
+        showStatus("Bookmark created", 0);
+        enableControls();
         window.close();
       }).catch(error => {
         console.error('Error during create bookmark:', error);
         alert("bookmark created failed " + JSON.stringify(error));
-        status.textContent = "bookmark created failed " + JSON.stringify(error);
-        document.getElementById("create").disabled = false;
+        showStatus("Failed to create bookmark: " + JSON.stringify(error), 0);
+        enableControls();
      });
      //window.close();
    }
@@ -364,9 +406,8 @@ function prepare4Creation () {
     return validTags;
   }
   
-  let createBtn = document.getElementById('create');
   
-  createBtn.onclick = function() {
+  saveCreateButton.onclick = function() {
     saveCreate();
   }
 });
