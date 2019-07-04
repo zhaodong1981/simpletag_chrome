@@ -190,7 +190,10 @@ function prepare4Creation () {
 
         }
         saveCreateButton.disabled = false;
+      }).catch(function (error){
+        alert("Failed to check existence of a bookmark with the same URL: " + error);
       });
+      
       chrome.storage.local.get(['tags_data'], function(result) {
         if (result.tags_data){
           //tags found
@@ -301,6 +304,7 @@ function prepare4Creation () {
       ).then(function() {
         console.log("bookmark updated");
         status.textContent= "bookmark updated";
+        saveCreateButton.disabled = false;
       //  window.close();
       }).catch(error => {
         console.error('Error during updating bookmark:', error);
@@ -319,6 +323,7 @@ function prepare4Creation () {
       ).then(function() {
         console.log("bookmark created");
         status.textContent = "bookmark created";
+        saveCreateButton.disabled = false;
         window.close();
       }).catch(error => {
         console.error('Error during create bookmark:', error);
