@@ -71,8 +71,40 @@ mainApp.controller('bookmarkController', function($scope, $http) {
             return user;
         });
 };
+function showBoomarks1(bookmarks){
+        //   alert("Time elapsed: " + new Date() - start);
+    $("#bookmarkTable tbody").empty(); // clear all rows
+    $("#bookmarkTable tfoot").empty();
+// $("#bookmarkTable").append("<tbody></tbody");
+    if($("#bookmark_table_head tr").length > 1){ // the search box added last time
+      $("#bookmark_table_head tr:last-child").remove();
+    }
+  
 
-async function showBookmarks(bookmarks){
+  var html = [];
+   for(const bookmark of bookmarks){
+
+    var row1 = "<tr><td>" +  "<a href=\""+bookmark.url + "\" target=\"_blank\" >"+bookmark.title+"</a>" +"</td> <td>";
+  
+    for (const tag of bookmark.tags){
+      row1 += "<a href=\"https://v.zhaodong.name/tag/tag.html#?name="+tag + "\" target=\"_blank\" style=\"margin: 5px\">"+tag+"</a>"
+    }
+
+    row1+="</td></tr>";
+    html.push(row1);        
+  }
+ // alert(JSON.stringify(html));
+  $("#bookmarkTable tbody").append(html.join(''));
+  
+  // And make them fancy    
+  $("#bookmarkTable").fancyTable({
+//       sortColumn:0,
+    pagination: true,
+    perPage:10,
+    globalSearch:true
+  });
+}
+function showBookmarks(bookmarks){
   var status = document.getElementById('status');
   if(typeof bookmarks === 'undefined' || bookmarks.constructor !== Array){
     status.textContent = 'No bookmarks';
@@ -124,7 +156,7 @@ async function showBookmarks(bookmarks){
 
 function forceUpdate(){
   var status = document.getElementById('status');
-  status.textContent = 'Loading bookmarks';
+  status.textContent = 'Loading bookmarks ...';
   $http.get('https://v.zhaodong.name/api/link',{headers: {'Authorization': 'Bearer ' + token }}).then(function (result) {
      status.textContent = 'Loading bookmark done';
    //    $scope.bookmarks =result.data.data;
@@ -137,8 +169,11 @@ function forceUpdate(){
      });
 
      status.textContent = 'Bookmarks loaded from server: ' + bookmarks.length;
-  
-     status.textContent = 'Done';
+     if(document.getElementById('loadandshow').innerHTML === 'Hide Bookmarks'){
+      showBoomarks1(bookmarks);
+     }
+    
+     //status.textContent = 'Done';
  }).catch({
    // alert("load bookmark failed");
  });
