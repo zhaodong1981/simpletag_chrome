@@ -22,14 +22,12 @@ mainApp.controller('bookmarkController', function($scope, $http) {
     if (result.token){
       token = result.token;
       prepare4Creation();
-   //   loadAndShowBookmarks();
  
     } else if(result.username && result.password){
      // alert("Need to login");
       login(result.username,result.password).then((result) => {
         token = result.token;
         prepare4Creation();
-//      loadAndShowBookmarks();
      }
     
      ).catch(error => {
@@ -71,64 +69,15 @@ mainApp.controller('bookmarkController', function($scope, $http) {
             return user;
         });
 };
-function showBoomarks1(bookmarks){
-        //   alert("Time elapsed: " + new Date() - start);
-    $("#bookmarkTable tbody").empty(); // clear all rows
-    $("#bookmarkTable tfoot").empty();
-// $("#bookmarkTable").append("<tbody></tbody");
-    if($("#bookmark_table_head tr").length > 1){ // the search box added last time
-      $("#bookmark_table_head tr:last-child").remove();
-    }
-  
-
-  var html = [];
-   for(const bookmark of bookmarks){
-
-    var row1 = "<tr><td>" +  "<a href=\""+bookmark.url + "\" target=\"_blank\" >"+bookmark.title+"</a>" +"</td> <td>";
-  
-    for (const tag of bookmark.tags){
-      row1 += "<a href=\"https://v.zhaodong.name/tag/tag.html#?name="+tag + "\" target=\"_blank\" style=\"margin: 5px\">"+tag+"</a>"
-    }
-
-    row1+="</td></tr>";
-    html.push(row1);        
+function clearBookmarkTable(){
+  $("#bookmarkTable tbody").empty(); // clear all rows
+  $("#bookmarkTable tfoot").empty();
+  if($("#bookmark_table_head tr").length > 1){ // the search box added last time
+    $("#bookmark_table_head tr:last-child").remove();
   }
- // alert(JSON.stringify(html));
-  $("#bookmarkTable tbody").append(html.join(''));
-  
-  // And make them fancy    
-  $("#bookmarkTable").fancyTable({
-//       sortColumn:0,
-    pagination: true,
-    perPage:10,
-    globalSearch:true
-  });
 }
+
 function showBookmarks(bookmarks){
-  var status = document.getElementById('status');
-  if(typeof bookmarks === 'undefined' || bookmarks.constructor !== Array){
-    status.textContent = 'No bookmarks';
-    return;
-  }
-  if(document.getElementById('loadandshow').innerHTML === 'Show Bookmarks'){
-    document.getElementById('loadandshow').innerHTML = 'Hide Bookmarks';
-    $("#bookmarkTable").show();
-  } else{
-    //
-    document.getElementById('loadandshow').innerHTML = 'Show Bookmarks';
-    status.textContent = '';
-    //   alert("Time elapsed: " + new Date() - start);
-    $("#bookmarkTable tbody").empty(); // clear all rows
-    $("#bookmarkTable tfoot").empty();
-// $("#bookmarkTable").append("<tbody></tbody");
-    if($("#bookmark_table_head tr").length > 1){ // the search box added last time
-      $("#bookmark_table_head tr:last-child").remove();
-    }
-    $("#bookmarkTable").hide();
-      return;
-  }
-  
-
   var html = [];
    for(const bookmark of bookmarks){
 
@@ -151,10 +100,9 @@ function showBookmarks(bookmarks){
     perPage:10,
     globalSearch:true
   });
-  
 }
 
-function forceUpdate(){
+function forceUpdate(bookmarkCallback){
   var status = document.getElementById('status');
   status.textContent = 'Loading bookmarks ...';
   $http.get('https://v.zhaodong.name/api/link',{headers: {'Authorization': 'Bearer ' + token }}).then(function (result) {
@@ -169,8 +117,8 @@ function forceUpdate(){
      });
 
      status.textContent = 'Bookmarks loaded from server: ' + bookmarks.length;
-     if(document.getElementById('loadandshow').innerHTML === 'Hide Bookmarks'){
-      showBoomarks1(bookmarks);
+     if(bookmarkCallback){
+      bookmarkCallback(bookmarks);
      }
     
      //status.textContent = 'Done';
@@ -193,7 +141,15 @@ function forceUpdate(){
      autocomplete(document.getElementById("tags"), tags1);
  });
 }
-function loadAndShowBookmarks(){
+function showHideBookmarks(){
+  var status = document.getElementById('status');
+  if(document.getElementById('showorhide').innerHTML === 'Hide Bookmarks'){
+    document.getElementById('showorhide').innerHTML = 'Show Bookmarks';
+    clearBookmarkTable();
+    $("#bookmarkTable").hide();
+    status.textContent = '';
+    return;
+  }
   chrome.storage.local.get(['bookmark_data'], function(result) {
     //  alert("local storage " + JSON.stringify(result));
    
@@ -201,12 +157,19 @@ function loadAndShowBookmarks(){
       if (result.bookmark_data &&  result.bookmark_data.updated){
         elapsed = Math.floor((Date.now() - result.bookmark_data.updated)/1000/60);
       }
-      var status = document.getElementById('status');
       if (elapsed <= CACHE_LIFE_LIMIT){
         status.textContent = "Bookmarks loaded. Updated " + elapsed + " mins ago";
-        showBookmarks(result.bookmark_data.bookmarks);
+        var bookmarks = result.bookmark_data.bookmarks;
+      
+        if(typeof bookmarks === 'undefined' || bookmarks.constructor !== Array){
+          status.textContent = 'No bookmarks';
+          return;
+        }
+        document.getElementById('showorhide').innerHTML = 'Hide Bookmarks';
+        showBookmarks(bookmarks);
+        $("#bookmarkTable").show();
       } else{
-        forceUpdate();
+        forceUpdate(showBookmarks);
       }
     });
 }
@@ -257,13 +220,16 @@ function prepare4Creation () {
       }
   }
 
-  let loadAndShowButton = document.getElementById('loadandshow');
-  loadAndShowButton.onclick = function (){
-    loadAndShowBookmarks();
+  let showHideButton = document.getElementById('showorhide');
+  showHideButton.onclick = function (){
+    showHideBookmarks();
   }
   let forceUpdateButton = document.getElementById('forceupdate');
   forceUpdateButton.onclick = function (){
-    forceUpdate();
+    forceUpdate(function(bookmarks){
+      clearBookmarkTable();
+      showBookmarks(bookmarks);
+    });
   }
    let logoutBtn = document.getElementById('logout');
    logoutBtn.onclick = function() {
