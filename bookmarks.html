@@ -5,20 +5,17 @@
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/v4-shims.css">
   <link rel="stylesheet" href="/lib/autocomplete.css">
 </head>
 <body style="width: 600px">
   
   <button id="logout" type="button" class="btn btn-light" style="float:right;">
-    <i class="fa fa-refresh"></i>
+    <i class="fas fa-power-off"></i>
     Logout
   </button>
   <h3>My Bookmarks</h3>
-  <div class="form-row" style="float:right;">
-    <a href="https://v.zhaodong.name/tag/"  target="_blank" >Bookmark Page</a>
-  </div>
-  <div></div>
   <div ng-app = "mainApp" ng-controller = "bookmarkController" >
 
     <div class="form-row">
@@ -46,10 +43,18 @@
     
     <button id="create" type="button" class="btn btn-primary btn-block">Create</button>
     <p></p>
-    <button id="showorhide" type="button" class="btn btn-secondary">Show Bookmarks</button>
-    <button id="forceupdate" type="button" class="btn btn-secondary" style="float:right;">Force Update</button>
+   
+   
+    <button id="showorhide" type="button" class="btn btn-light" style="float:left;">
+      <i class="far fa-eye-slash"></i>
+      Show Bookmarks
+    </button>
+    <button id="forceupdate" type="button" class="btn btn-light" style="float:right;">
+      <i class="fas fa-sync"></i>
+      Force Update
+    </button>
     
-    <div id="status"></div>
+  
   <div class="table-responsive">
     <table id="bookmarkTable" class="table table-striped table-borderless table-sm" style="display:none">
       <thead id="bookmark_table_head" class="thead-light">
@@ -63,6 +68,7 @@
     </table>
   </div>
  </div>
+ <div id="status"></div>
  <script src="lib/util.js"></script>
 <script src="lib/fancyTable.js"></script>
 <script src="lib/autocomplete.js"></script>

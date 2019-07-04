@@ -4,6 +4,7 @@ var mainApp = angular.module("mainApp", []);
 const CACHE_LIFE_LIMIT = 15; //cached bookmarks valid for 15 mins. 
 
 var token ='';
+var bookmarktable_visible = 0;
 
 //display existing tags
 mainApp.controller('bookmarkController', function($scope, $http) {
@@ -143,8 +144,10 @@ function forceUpdate(bookmarkCallback){
 }
 function showHideBookmarks(){
   var status = document.getElementById('status');
-  if(document.getElementById('showorhide').innerHTML === 'Hide Bookmarks'){
-    document.getElementById('showorhide').innerHTML = 'Show Bookmarks';
+  if(bookmarktable_visible === 1){
+    //document.getElementById('showorhide').innerHTML = 'Show Bookmarks';
+    bookmarktable_visible = 0;
+    document.getElementById('showorhide').innerHTML = '<i class="far fa-eye-slash"></i> Show Bookmarks';
     clearBookmarkTable();
     $("#bookmarkTable").hide();
     status.textContent = '';
@@ -165,7 +168,9 @@ function showHideBookmarks(){
           status.textContent = 'No bookmarks';
           return;
         }
-        document.getElementById('showorhide').innerHTML = 'Hide Bookmarks';
+        //document.getElementById('showorhide').innerHTML = 'Hide Bookmarks';
+        bookmarktable_visible = 1;
+        document.getElementById('showorhide').innerHTML='<i class="far fa-eye-slash"></i> Hide Bookmarks';
         showBookmarks(bookmarks);
         $("#bookmarkTable").show();
       } else{
@@ -229,7 +234,7 @@ function prepare4Creation () {
   }
   let forceUpdateButton = document.getElementById('forceupdate');
   forceUpdateButton.onclick = function (){
-    if(document.getElementById('showorhide').innerHTML === 'Hide Bookmarks'){
+    if(bookmarktable_visible === 1){
       forceUpdate(function(bookmarks){//bookmark table visible, refresh it
         clearBookmarkTable();
         showBookmarks(bookmarks);
