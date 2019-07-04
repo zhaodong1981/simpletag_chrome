@@ -296,7 +296,7 @@ function prepare4Creation () {
       ).then(function() {
         console.log("bookmark updated");
         status.textContent= "bookmark updated";
-        window.close();
+      //  window.close();
       }).catch(error => {
         console.error('Error during updating bookmark:', error);
         alert("bookmark udpated failed " + JSON.stringify(error));
