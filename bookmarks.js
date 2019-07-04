@@ -226,10 +226,15 @@ function prepare4Creation () {
   }
   let forceUpdateButton = document.getElementById('forceupdate');
   forceUpdateButton.onclick = function (){
-    forceUpdate(function(bookmarks){
-      clearBookmarkTable();
-      showBookmarks(bookmarks);
-    });
+    if(document.getElementById('showorhide').innerHTML === 'Hide Bookmarks'){
+      forceUpdate(function(bookmarks){//bookmark table visible, refresh it
+        clearBookmarkTable();
+        showBookmarks(bookmarks);
+      });
+    }else{//bookmark table not visible, only refresh cache
+      forceUpdate();
+    }
+    
   }
    let logoutBtn = document.getElementById('logout');
    logoutBtn.onclick = function() {
