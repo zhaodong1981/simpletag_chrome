@@ -209,7 +209,7 @@ function prepare4Creation () {
         if(result.data.length >0){
             //exists
           existingBookmark = result.data[0];
-          saveCreateButton.innerHTML = 'Save';
+          saveCreateButton.innerHTML = '<i class="fas fa-save"></i></i> Save';
           
           for(const tag of existingBookmark.tags){
              $scope.tags +=tag + ',';
