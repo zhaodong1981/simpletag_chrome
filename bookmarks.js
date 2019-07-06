@@ -246,8 +246,8 @@ function prepare4Creation () {
           $scope.bookmarks =result.data;
        });
       }else { // show bookmarks
-        $http.get('https://v.zhaodong.name/api/link?per_page=50&page=1',{headers: {'Authorization': 'Bearer ' + token }}).then(function (result) {
-          $scope.bookmarks =result.data.data;
+        $http.get('https://v.zhaodong.name/api/link?limit=100',{headers: {'Authorization': 'Bearer ' + token }}).then(function (result) {
+          $scope.bookmarks =result.data;
        });
       }
   }
