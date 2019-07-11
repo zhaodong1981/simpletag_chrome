@@ -102,10 +102,12 @@ function showBookmarks(bookmarks){
    for(const bookmark of bookmarks){
 
     var row1 = "<tr><td>" +  "<a href=\""+bookmark.url + "\" target=\"_blank\" >"+bookmark.title+"</a>" +"</td> <td>";
-  
-    for (const tag of bookmark.tags){
-      row1 += "<a href=\"https://v.zhaodong.name/tag/tag.html#?name="+tag + "\" target=\"_blank\" style=\"margin: 5px\">"+tag+"</a>"
+    if(bookmark.tags && bookmark.tags.constructor === Array){
+      for (const tag of bookmark.tags){
+        row1 += "<a href=\"https://v.zhaodong.name/tag/tag.html#?name="+tag + "\" target=\"_blank\" style=\"margin: 5px\">"+tag+"</a>"
+      }
     }
+   
 
     row1+="</td></tr>";
     html.push(row1);        
@@ -198,6 +200,39 @@ function showHideBookmarks(){
       }
       enableControls();
     });
+}
+
+function addToLocal(bookmark,update){
+   
+    chrome.storage.local.get(['bookmark_data'], function(result) {
+      //  alert("local storage " + JSON.stringify(result));
+        var bookmarks = [];
+       
+
+        if (result.bookmark_data){
+          bookmarks = result.bookmark_data.bookmarks;
+          if(update){//Updating existing bookmark length
+          //  alert("Updating existing bookmark length=" + bookmarks.length);
+            var i,j;
+            for(i=0,j=bookmarks.length; i<j; i++){
+             //   alert("bookmarks[i].url=" + bookmarks[i].url);
+                if (bookmarks[i].url === bookmark.url){
+              //    alert("Existing bookmark found");
+                  bookmark.id = bookmarks[i].id;
+                  bookmarks.splice(i, 1);
+                  break;
+                }
+            }
+          }
+        } 
+        bookmarks.unshift(bookmark);
+      
+        chrome.storage.local.set({
+          bookmark_data: {bookmarks:bookmarks, updated: Date.now()}
+        }, function() {
+          
+        });
+      });
 }
 function prepare4Creation () {
 
@@ -328,19 +363,19 @@ function prepare4Creation () {
     let tags = formatTags (tagsInput.value);
     var url = document.getElementById('url').value;
     var title = titleInput.value;
-    var body =    JSON.stringify({
+    var bookmark = {
       'title': title,
       'url': url,
       'description': existingBookmark ? existingBookmark.description : 'Bookmark created via chrome extension',
       'tags': tags          
-    });
+    };
+    var body =    JSON.stringify(bookmark);
 
     var headers = {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + token 
     };
-    var status = document.getElementById('status');
    if (existingBookmark){
  //    alert("update");
      $http.put('https://v.zhaodong.name/api/link/'+existingBookmark.id,
@@ -352,6 +387,7 @@ function prepare4Creation () {
       ).then(function() {
         showStatus("Bookmark updated", 0);
         enableControls();
+        addToLocal(bookmark,1);
       //  window.close();
       }).catch(error => {
         console.error('Error during updating bookmark:', error);
@@ -371,7 +407,9 @@ function prepare4Creation () {
         console.log("bookmark created");
         showStatus("Bookmark created", 0);
         enableControls();
-        window.close();
+        addToLocal(bookmark);
+        saveCreateButton.innerHTML = '<i class="fas fa-save"></i></i> Save';
+    //    window.close();
       }).catch(error => {
         console.error('Error during create bookmark:', error);
         alert("bookmark created failed " + JSON.stringify(error));
