@@ -52,7 +52,7 @@ mainApp.controller('bookmarkController', function($scope, $http) {
 */
   chrome.storage.local.get(['token','config'], function(result) {
     
-    if(!result.config.hostname){
+    if(!result.config || !result.config.hostname){
       alert("Server not set. Please set in options.");
       window.close();
       return;
@@ -74,7 +74,7 @@ mainApp.controller('bookmarkController', function($scope, $http) {
       alert('Username or password not set. Please set them in the options page.');
     }
   });
-  alert("https://v.zhaodong.name= " + SERVER_HOSTNAME);
+ // alert("https://v.zhaodong.name= " + SERVER_HOSTNAME);
   function handleResponse(response) {
     return response.text().then(text => {
         const data = text && JSON.parse(text);
