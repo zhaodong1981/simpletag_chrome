@@ -5,6 +5,7 @@ const CACHE_LIFE_LIMIT = 15; //cached bookmarks valid for 15 mins.
 
 var token ='';
 var bookmarktable_visible = 0;
+var SERVER_HOSTNAME = '';
 
 //display existing tags
 mainApp.controller('bookmarkController', function($scope, $http) {
@@ -37,15 +38,32 @@ mainApp.controller('bookmarkController', function($scope, $http) {
     status.textContent = '';
     $("#spinner_status").hide();
   }
-
-  chrome.storage.local.get(['token','username','password'], function(result) {
+/*
+  function restore_options() {
+    // Use default value color = 'red' and likesColor = true.
+    chrome.storage.local.get([
+      "config"]
+    , function(items) {
+      document.getElementById('config.hostname').value = items.config.hostname;
+      document.getElementById('config.username').value = items.config.username;
+      document.getElementById('config.password').value = items.config.password;
+    });
+  }
+*/
+  chrome.storage.local.get(['token','config'], function(result) {
+    
+    if(!result.config.hostname){
+      alert("Server not set. Please set in options.");
+      window.close();
+      return;
+    }
+    SERVER_HOSTNAME = result.config.hostname;
     if (result.token){
       token = result.token;
       prepare4Creation();
- 
-    } else if(result.username && result.password){
-     // alert("Need to login");
-      login(result.username,result.password).then((result) => {
+    } else if(result.config.username && result.config.password){
+  //    alert("Need to login usernama="+result.config.username + ",pass=" + result.config.password + ",server=" + result.config.hostname);
+      login(result.config.username,result.config.password).then((result) => {
         token = result.token;
         prepare4Creation();
      }
@@ -56,7 +74,7 @@ mainApp.controller('bookmarkController', function($scope, $http) {
       alert('Username or password not set. Please set them in the options page.');
     }
   });
-
+  alert("https://v.zhaodong.name= " + SERVER_HOSTNAME);
   function handleResponse(response) {
     return response.text().then(text => {
         const data = text && JSON.parse(text);
