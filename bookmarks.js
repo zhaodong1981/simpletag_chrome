@@ -140,6 +140,10 @@ function showBookmarks(bookmarks){
     perPage:10,
     globalSearch:true
   });
+
+  bookmarktable_visible = 1;
+  showHideButton.innerHTML='<i class="far fa-eye-slash"></i> Hide Bookmarks';
+  $("#bookmarkTable").show();
 }
 
 function forceUpdate(bookmarkCallback){
@@ -205,13 +209,15 @@ function showHideBookmarks(){
       
         if(typeof bookmarks === 'undefined' || bookmarks.constructor !== Array){
           showStatus('No bookmarks',0);
+          enableControls();
           return;
         }
         //document.getElementById('showorhide').innerHTML = 'Hide Bookmarks';
-        bookmarktable_visible = 1;
-        showHideButton.innerHTML='<i class="far fa-eye-slash"></i> Hide Bookmarks';
+        clearBookmarkTable();
+//        bookmarktable_visible = 1;
+//        showHideButton.innerHTML='<i class="far fa-eye-slash"></i> Hide Bookmarks';
         showBookmarks(bookmarks);
-        $("#bookmarkTable").show();
+//        $("#bookmarkTable").show();
         
       } else{
         forceUpdate(showBookmarks);
