@@ -461,7 +461,7 @@ function prepare4Creation () {
   
     let validTags = [];
     for (const tag of tempTags ){
-      if (tag !== ''){
+      if (tag !== '' && validTags.indexOf(tag) === -1){
         validTags.push(tag);
       }
     }
