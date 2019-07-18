@@ -8,7 +8,6 @@
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/v4-shims.css">
   <link rel="stylesheet" href="/lib/autocomplete.css">
-
 </head>
 <body style="width: 600px;height: 240px">
   <button id="logout" type="button" class="btn btn-light" style="float:right;">
@@ -18,7 +17,7 @@
   <h3>Create a bookmark</h3>
   <div ng-app = "mainApp" ng-controller = "bookmarkController" >
 
-    <div class="form-row">
+    <div class="form-row" style="margin-left: 2px;margin-right: 2px;">
       
         <label class="font-weight-bold col-sm-1">Title</label>
         <div class="autocomplete col-sm-11">
@@ -26,14 +25,14 @@
         </div>
     </div>
     <p></p>
-    <div class="form-row">
+    <div class="form-row" style="margin-left: 2px;margin-right: 2px;">
         <label class="font-weight-bold col-sm-1">URL</label>
         <div class="autocomplete col-sm-11">
           <input type="text" id="url" class="form-control" value="{{ page.url }}" readonly/>
         </div>
     </div>
     <p></p>
-    <div class="form-row">
+    <div class="form-row" style="margin-left: 2px;margin-right: 2px;">
         <label class="font-weight-bold col-sm-1">Tags</label>
         <div class="autocomplete col-sm-11">
           <input type="text" id="tags" class="form-control" placeholder="Input your tags here, separated by ," value="{{ tags }}"/>
