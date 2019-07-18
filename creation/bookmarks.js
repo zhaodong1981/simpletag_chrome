@@ -119,16 +119,13 @@ function prepare4Creation () {
         enableControls();
       });
       
-      chrome.storage.local.get(['tags_data'], function(result) {
-        if (result.tags_data){
-          //tags found
-          let tags = result.tags_data.map(a => a.tag);
-      //    alert(tags);
-          autocomplete(tagsInput, tags);
-        } else{
-         // alert("tag not found");
-        }
-      });
+    fetch('https://v.zhaodong.name/api/tag',
+      {headers: {'Authorization': 'Bearer ' + token }})
+      .then(res => res.json()).then(result => {
+        const tags = result;
+        let tags1 = tags.map(a => a.tag);
+        autocomplete(document.getElementById("tags"), tags1);
+ });
     
   };
 
