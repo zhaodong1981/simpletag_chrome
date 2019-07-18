@@ -14,7 +14,7 @@
     Logout
   </button>
   <h3>My Bookmarks</h3>
-  <div ng-app = "mainApp" ng-controller = "bookmarkController" >   
+  <div ng-app = "mainApp" ng-controller = "bookmarkController">   
    
     
    
@@ -37,13 +37,14 @@
       </tbody>
     </table>
   </div>
- </div>
- <div id="spinner_status" class="text-left" style="display:none">
-  <div class="spinner-border" role="status">
-    <span class="sr-only">Loading...</span>
+  <div id="status"></div>
+  <div id="spinner_status" class="text-left" style="display:none">
+    <div class="spinner-border" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
   </div>
-</div>
- <div id="status"></div>
+ </div>
+
 <script src="lib/fancyTable.js"></script>
 <script src="bookmarks.js"></script>
 </body>
