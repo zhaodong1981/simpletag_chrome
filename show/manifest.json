@@ -3,21 +3,23 @@
   "version": "0.1",
   "description": "Chrome extenstion to manage your tags, including search, add, edit and delete.",
   "permissions": [
-    "https://v.zhaodong.name/",
     "storage",
     "alarms"
   ],
-  "browser_action": {
+  "host_permissions": [
+    "https://v.zhaodong.name/*"
+  ],
+  "action": {
       "default_title": "My Bookmarks",
       "default_icon": "icon.png",
       "default_popup": "bookmarks.html"
   },
   "background": {
-    "scripts": ["bookmark_cache.js"],
-    "persistent": true
+    "service_worker": "bookmark_cache.js"
   },
-  "manifest_version": 2,
-  "content_security_policy": "script-src 'self' https://ajax.googleapis.com https://unpkg.com https://maxcdn.bootstrapcdn.com https://code.jquery.com https://cdnjs.cloudflare.com; object-src 'self'",
+  "manifest_version": 3,
+  "content_security_policy": {
+   },
   "options_ui": {
     "page": "options.html",
     "open_in_tab": false

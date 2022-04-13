@@ -3,17 +3,20 @@
   "version": "0.9",
   "description": "Chrome extenstion to create a new bookmark.",
   "permissions": [
-    "https://v.zhaodong.name/",
     "tabs",
     "storage"
   ],
-  "browser_action": {
+  "host_permissions": [
+    "https://v.zhaodong.name/*"
+  ],
+  "action": {
       "default_title": "Create Bookmark",
       "default_icon": "icon.png",
       "default_popup": "bookmarks.html"
   },
-  "manifest_version": 2,
-  "content_security_policy": "script-src 'self' https://ajax.googleapis.com https://unpkg.com https://maxcdn.bootstrapcdn.com https://code.jquery.com https://cdnjs.cloudflare.com; object-src 'self'",
+  "manifest_version": 3,
+   "content_security_policy": {
+    },
   "options_ui": {
     "page": "options.html",
     "open_in_tab": false
